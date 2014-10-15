@@ -1,0 +1,27 @@
+h1, h2, h3, h4, h5 {
+	color: green;
+	text-decoration: underline;
+}
+
+body {
+    background-color: #DBFDFF;
+	margin-left: auto;
+    margin-right: auto;
+    width: 6em;
+    font-family: 'Droid Sans';
+  	font-size: 2em;
+  	text-shadow: 4px #aaa;
+}
+
+li {
+	list-style: circle;
+}
+
+#a {
+	display: inline-block;
+	padding: 0px;
+	margin: 0px;
+	border: 0px;
+	width: 500px;
+}
+
