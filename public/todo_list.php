@@ -1,5 +1,10 @@
 <?php
  
+// Initialize your array by calling your function to open file.
+ 
+$items = open();
+
+
  // Verify there were uploaded files and no errors
 if (count($_FILES) > 0 && $_FILES['file1']['error'] == UPLOAD_ERR_OK) {
     // Set the destination directory for uploads
@@ -13,6 +18,13 @@ if (count($_FILES) > 0 && $_FILES['file1']['error'] == UPLOAD_ERR_OK) {
 
     // Move the file from the temp location to our uploads directory
     move_uploaded_file($_FILES['file1']['tmp_name'], $savedFilename);
+
+    //check for test file
+    if ($_FILES['file1']['type'] == 'text/plain'){
+    $newItems = open($savedFilename);
+	$items = array_merge($items, $newItems);
+	save($items);
+ 	}
 }
 
 // Check if we saved a file
@@ -20,6 +32,10 @@ if (isset($savedFilename)) {
     // If we did, show a link to the uploaded file
     echo "<p>You can download your file <a href='/uploads/{$filename}'>here</a>.</p>";
 }
+
+
+
+
 
 // Define a function which will open your default filename, and return an array of items.
 
@@ -58,9 +74,6 @@ function save($array, $filename = 'list.txt'){
  
 /* This function accepts an array, saves it to file, and returns nothing. */
  
-// Initialize your array by calling your function to open file.
- 
-$items = open();
 
 
 // Check for GET Requests
@@ -77,14 +90,14 @@ if (isset($_GET['id'])){
 if (isset($_POST['newitem'])) {
 	//Assign newitem from the form the $itemToAdd.
 	$itemToAdd = $_POST['newitem'];
-	var_dump($itemToAdd);
 	//Array push that new item onto the existing list.
 	//alternate way to do array push
 	$items[] = $itemToAdd;
 	// Save the whole list to file.
 	save($items);
 }
- 
+
+
 ?>
  
 <html>
