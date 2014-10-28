@@ -66,6 +66,10 @@ function open($filename = 'list.txt'){
 
 function save($array, $filename = 'list.txt'){
 
+	foreach ($array as $key => $value) {
+		$array[$key] = strip_tags($value);
+	}
+
 	$handle = fopen($filename, 'w');
 	$string = implode("\n", $array);
 	fwrite($handle, $string);
@@ -117,11 +121,14 @@ if (isset($_POST['newitem'])) {
         </p>
     </form>
 <ol>
-<!-- Echo Out the List Items -->
-<?php foreach ($items as $key => $item) {
-	echo "<li>"."<a href=\"?id=$key\">X</a>". $item."</li>";
-	
-}?>
+
+<? foreach ($items as $key => $item): ?>
+	<li>
+		<a href="?id=<?=$key?>">X</a>
+		<?= strip_tags(htmlspecialchars($item)); ?>
+	</li>
+<? endforeach ?>
+
 </ol>
  
 <!-- Create a Form to Accept New Items -->
