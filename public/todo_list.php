@@ -2,22 +2,20 @@
  
 // Define a function which will open your default filename, and return an array of items.
 
-function open ($filename = 'list.txt'){
+function open($filename = 'list.txt'){
 
-	if (filesize($filename) > 0){
+	if (file_exists($filename) && (filesize($filename)) > 0){
 		$filesize = filesize($filename);
+		$handle = fopen($filename, 'r');
+		$contents = trim(fread($handle, $filesize));
+		$contentArray = explode("\n", $contents);
+
+		fclose($handle);
 	}
 
 	else {
-		$filesize = 100;
+		$contentArray = [];
 	}
-
-
-	$handle = fopen($filename, 'r');
-	$contents = trim(fread($handle, $filesize));
-	$contentArray = explode("\n", $contents);
-
-	fclose($handle);
 
 	return $contentArray;
 
@@ -58,6 +56,7 @@ if (isset($_GET['id'])){
 if (isset($_POST['newitem'])) {
 	//Assign newitem from the form the $itemToAdd.
 	$itemToAdd = $_POST['newitem'];
+	var_dump($itemToAdd);
 	//Array push that new item onto the existing list.
 	//alternate way to do array push
 	$items[] = $itemToAdd;
