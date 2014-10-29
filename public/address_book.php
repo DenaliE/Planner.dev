@@ -105,15 +105,15 @@ if (isset($_POST['zip'])) {
 		<? endforeach; ?>
 	<!--Make a new row for the new record-->
 	<tr>
-	<? foreach ($form as $key => $value): ?>
+	<!--<? foreach ($form as $key => $value): ?>
 		<td><?=$value?></td>
-	<?endforeach;?>
+	<?endforeach;?>-->
 	
-		<!-- <td><?=$name?></td>
+		<td><?=$name?></td>
 		<td><?=$address?></td>
 		<td><?=$city?></td>
 		<td><?=$state?></td>
-		<td><?=$zip?></td> -->
+		<td><?=$zip?></td>
 	</tr>
 			
 				
