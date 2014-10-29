@@ -14,66 +14,24 @@ $addressBook = [
     ['LucasArts', 'P.O. Box 29901', 'San Francisco', 'CA', '94129-0901']
 ];
 
-
-if (isset($_POST['name'])) {
+//capture input
+if (isset($_POST)) {
+	
 	//Assign newitem from the form the $itemToAdd.
 	//make an array from the input
 	
-	$name = $_POST['name'];
+	$newArray = $_POST;
 	//Array push that new item onto the existing list.
 	//alternate way to do array push
-	$addressBook[] = $name;
-	// Save the whole list to file.
+	
 	
 }
 
-if (isset($_POST['address'])) {
-	//Assign newitem from the form the $itemToAdd.
-	//make an array from the input
-	
-	$address = $_POST['address'];
-	//Array push that new item onto the existing list.
-	//alternate way to do array push
-	$addressBook[] = $address;
-	// Save the whole list to file.
-	
-}
 
-if (isset($_POST['city'])) {
-	//Assign newitem from the form the $itemToAdd.
-	//make an array from the input
-	
-	$city = $_POST['city'];
-	//Array push that new item onto the existing list.
-	//alternate way to do array push
-	$addressBook[] = $city;
-	// Save the whole list to file.
-	
-}
+//add input array to $addressBook array
+	$addressBook[] = $newArray;
+// Save the whole list to file.
 
-if (isset($_POST['state'])) {
-	//Assign newitem from the form the $itemToAdd.
-	//make an array from the input
-	
-	$state = $_POST['state'];
-	//Array push that new item onto the existing list.
-	//alternate way to do array push
-	$addressBook[] = $state;
-	// Save the whole list to file.
-	
-}
-
-if (isset($_POST['zip'])) {
-	//Assign newitem from the form the $itemToAdd.
-	//make an array from the input
-	
-	$zip = $_POST['zip'];
-	//Array push that new item onto the existing list.
-	//alternate way to do array push
-	$addressBook[] = $zip;
-	// Save the whole list to file.
-	
-}
 
 ?>
 
@@ -103,18 +61,6 @@ if (isset($_POST['zip'])) {
 			<? endforeach; ?>
 			</tr>	
 		<? endforeach; ?>
-	<!--Make a new row for the new record-->
-	<tr>
-	<!--<? foreach ($form as $key => $value): ?>
-		<td><?=$value?></td>
-	<?endforeach;?>-->
-	
-		<td><?=$name?></td>
-		<td><?=$address?></td>
-		<td><?=$city?></td>
-		<td><?=$state?></td>
-		<td><?=$zip?></td>
-	</tr>
 			
 				
 </table>
