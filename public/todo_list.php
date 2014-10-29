@@ -58,18 +58,27 @@ function open($filename = 'list.txt'){
 
 }
 
-
+//sanitizes input
+function sanitize($array){
+	foreach ($array as $key => $value) {
+		//echo $value; dirty
+		$array[$key] = htmlspecialchars(strip_tags($value));//Overwrite the value
+		//echo $value; clean
+	}
+	
+	return $array;
+	
+}
  
 /* This function accepts a filename, and returns an array of list items. */
  
 // Define a function which will save your list to file.
 
 function save($array, $filename = 'list.txt'){
-
-	foreach ($array as $key => $value) {
-		$array[$key] = strip_tags($value);
-	}
-
+	//var_dump($array);
+	//sanitize($array);
+	//var_dump($array);
+	$array = sanitize($array);
 	$handle = fopen($filename, 'w');
 	$string = implode("\n", $array);
 	fwrite($handle, $string);
@@ -84,7 +93,9 @@ function save($array, $filename = 'list.txt'){
     // If there is a get request; remove the appropriate item.
 if (isset($_GET['id'])){
 	$id = $_GET['id'];
+	$items = array_values($items);
 	unset($items[$id]);
+
 	save($items);
 }
  
@@ -107,6 +118,8 @@ if (isset($_POST['newitem'])) {
 <html>
 <head>
     <title>TODO App</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
 </head>
 <body>
 <h1>Upload File</h1>
@@ -125,7 +138,7 @@ if (isset($_POST['newitem'])) {
 <? foreach ($items as $key => $item): ?>
 	<li>
 		<a href="?id=<?=$key?>">X</a>
-		<?= strip_tags(htmlspecialchars($item)); ?>
+		<?= htmlspecialchars(strip_tags($item)); ?>
 	</li>
 <? endforeach ?>
 
