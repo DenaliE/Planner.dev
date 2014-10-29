@@ -32,6 +32,12 @@ if (isset($_POST)) {
 	$addressBook[] = $newArray;
 // Save the whole list to file.
 
+//write to csv file
+$handle = fopen('address_book.csv', 'w');
+foreach ($addressBook as $row) {
+    fputcsv($handle, $row);
+}
+
 
 ?>
 
