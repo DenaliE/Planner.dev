@@ -2,41 +2,78 @@
 
 if ($_POST) {
 	var_dump($_POST);
+	var_dump("phone");
+	var_dump($_POST['phone']);
 }
 
 // Create a function to store a new entry. 
 // A new entry should have/validate 5 required fields: name, address, city, state, and zip. 
 // Display error if each is not filled out.
 
-$addressBook = [
-    ['The White House', '1600 Pennsylvania Avenue NW', 'Washington', 'DC', '20500'],
-    ['Marvel Comics', 'P.O. Box 1527', 'Long Island City', 'NY', '11101'],
-    ['LucasArts', 'P.O. Box 29901', 'San Francisco', 'CA', '94129-0901']
-];
+// $addressBook = [
+//     ['The White House', '1600 Pennsylvania Avenue NW', 'Washington', 'DC', '20500'],
+//     ['Marvel Comics', 'P.O. Box 1527', 'Long Island City', 'NY', '11101'],
+//     ['LucasArts', 'P.O. Box 29901', 'San Francisco', 'CA', '94129-0901']
+// ];
 
-//capture input
-if (isset($_POST)) {
+//change to $addressBook to fopen('address_book.csv', 'a');
+$addressBook = [];
+//check input
+if (!empty($_POST)) {
+  if (empty($_POST['name']) || empty($_POST['phone']) || empty($_POST['address']) || empty($_POST['city']) || empty($_POST['state']) || empty($_POST['zip'])) {
+
+	$error = "Please enter all fields.";
+	var_dump($error);
 	
-	//Assign newitem from the form the $itemToAdd.
-	//make an array from the input
+	} // if validation
+
+	else {
+		
+		if (isset($_POST['name'])){
+			$newEntry['name'] = $_POST['name'];
+			
+		}
+
+		if (isset($_POST['phone'])){
+			$newEntry['phone'] = $_POST['phone'];
+			
+		}
+
+		if (isset($_POST['address'])){
+			$newEntry['address'] = $_POST['address'];
+			
+		}
+
+		if (isset($_POST['city'])){
+			$newEntry['city'] = $_POST['city'];
+			
+		}
+
+		if (isset($_POST['state'])){
+			$newEntry['state'] = $_POST['state'];
+			
+		}
+		if (isset($_POST['zip'])){
+			$newEntry['zip'] = $_POST['zip'];
+			
+		}
+
+		var_dump($addressBook);
+
+		$addressBook[] = $newEntry;
+
+		//write to csv file
+		$handle = fopen('address_book.csv', 'a');
+		foreach ($addressBook as $row) {
+		    fputcsv($handle, $row);
+		}// foreach
+
 	
-	$newArray = $_POST;
-	//Array push that new item onto the existing list.
-	//alternate way to do array push
-	
-	
-}
+	} // elseif
 
 
-//add input array to $addressBook array
-	$addressBook[] = $newArray;
-// Save the whole list to file.
-
-//write to csv file
-$handle = fopen('address_book.csv', 'w');
-foreach ($addressBook as $row) {
-    fputcsv($handle, $row);
-}
+ 
+}// if post not empty
 
 
 ?>
@@ -52,6 +89,7 @@ foreach ($addressBook as $row) {
 <table class=" table table-bordered table-striped">
 	<tr>
 		<th>Name</th>
+		<th>Phone</th>
 		<th>Address</th>
 		<th>City</th>
 		<th>State</th>
@@ -72,11 +110,13 @@ foreach ($addressBook as $row) {
 </table>
 <form id = "form" role = "form" class="form-inline" method="POST" action="address_book.php">
 	
-	<input id="name" name="name">
-	<input id="address" name="address">
-	<input id="city" name="city">
-	<input id="state" name="state">
-	<input id="zip" name="zip">
+	<input id="name" name="name" >
+	<input id="phone" name="phone"  >
+	<input id="address" name="address" >
+	<input id="city" name="city" >
+	<input id="state" name="state" >
+	<input id="zip" name="zip" >
+	
 	<button class="btn">Add</button>
 
 
