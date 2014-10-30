@@ -113,6 +113,7 @@ if (isset($_GET['id'])){
 <h1>Contacts</h1>
 <table class=" table table-bordered table-striped">
 	<tr>
+		<th>Delete</th>
 		<th>Name</th>
 		<th>Phone</th>
 		<th>Address</th>
@@ -122,11 +123,11 @@ if (isset($_GET['id'])){
 	</tr>
 		
 		<?  foreach ($addressBook as $key => $address): ?>
-			<tr>	
+			<tr>	<td><a href="?id=<?=$key?>">  x  </a></td>
 			<?foreach ($address as $key => $value): ?>
 				<!--var_dump($value);-->
 				<!-- insert each in table row -->
-				<td><a href="?id=<?=$key?>"> x  <?=$value?></a></td>
+				<td><?=$value?></td>
 			<? endforeach; ?>
 			</tr>	
 		<? endforeach; ?>
