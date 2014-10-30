@@ -6,6 +6,18 @@ if ($_POST) {
 	//var_dump($_POST['phone']);
 }
 
+function write_csv($addressBook){
+
+	//write to csv file
+$handle = fopen('address_book.csv', 'w');
+foreach ($addressBook as $row) {
+    fputcsv($handle, $row);
+}// foreach
+
+fclose($handle);
+
+}
+
 // Create a function to store a new entry. 
 // A new entry should have/validate 5 required fields: name, address, city, state, and zip. 
 // Display error if each is not filled out.
@@ -23,8 +35,8 @@ while(!feof($handle)) {
 
     if (!empty($row)) {
         $addressBook[] = $row;
-    }
-}
+    }//if
+}//while
 
 fclose($handle);
 
@@ -66,17 +78,12 @@ if (!empty($_POST)) {
 		if (isset($_POST['zip'])){
 			$newEntry['zip'] = $_POST['zip'];
 			
-		}
+		}//else
 
 		var_dump($addressBook);
 
 		$addressBook[] = $newEntry;
-
-		//write to csv file
-		$handle = fopen('address_book.csv', 'w');
-		foreach ($addressBook as $row) {
-		    fputcsv($handle, $row);
-		}// foreach
+		write_csv($addressBook);
 
 //redirect to keep browser from offering to resubmit form
 //add output buffer
@@ -84,6 +91,16 @@ if (!empty($_POST)) {
 
 	} // elseif 
 }// if post not empty
+
+if (isset($_GET['id'])){
+	$id = $_GET['id'];
+	unset($addressBook[$id]);
+    
+	write_csv($addressBook);
+
+	//var_dump($id);
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -109,7 +126,7 @@ if (!empty($_POST)) {
 			<?foreach ($address as $key => $value): ?>
 				<!--var_dump($value);-->
 				<!-- insert each in table row -->
-				<td><?=$value?></td>
+				<td><a href="?id=<?=$key?>"> x  <?=$value?></a></td>
 			<? endforeach; ?>
 			</tr>	
 		<? endforeach; ?>
