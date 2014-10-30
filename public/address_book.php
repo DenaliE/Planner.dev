@@ -2,8 +2,8 @@
 
 if ($_POST) {
 	var_dump($_POST);
-	var_dump("phone");
-	var_dump($_POST['phone']);
+	//var_dump("phone");
+	//var_dump($_POST['phone']);
 }
 
 // Create a function to store a new entry. 
@@ -30,8 +30,6 @@ while(!feof($handle)) {
         $addressBook[] = $row;
     }
 }
-
-//redirect to keep browser from offering to resubmit form
 
 fclose($handle);
 
@@ -80,12 +78,14 @@ if (!empty($_POST)) {
 		$addressBook[] = $newEntry;
 
 		//write to csv file
-		$handle = fopen('address_book.csv', 'a');
+		$handle = fopen('address_book.csv', 'w');
 		foreach ($addressBook as $row) {
 		    fputcsv($handle, $row);
 		}// foreach
 
-	
+		//redirect to keep browser from offering to resubmit form
+		//add output buffer
+//header("Location: http://planner.dev/address_book.php");
 	} // elseif
 
 
