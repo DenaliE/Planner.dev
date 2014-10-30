@@ -17,7 +17,24 @@ if ($_POST) {
 // ];
 
 //change to $addressBook to fopen('address_book.csv', 'a');
+$filename = 'address_book.csv';
+
+$handle = fopen($filename, 'r');
+
 $addressBook = [];
+
+while(!feof($handle)) {
+    $row = fgetcsv($handle);
+
+    if (!empty($row)) {
+        $addressBook[] = $row;
+    }
+}
+
+//redirect to keep browser from offering to resubmit form
+
+fclose($handle);
+
 //check input
 if (!empty($_POST)) {
   if (empty($_POST['name']) || empty($_POST['phone']) || empty($_POST['address']) || empty($_POST['city']) || empty($_POST['state']) || empty($_POST['zip'])) {
