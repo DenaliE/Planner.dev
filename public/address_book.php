@@ -10,11 +10,6 @@ if ($_POST) {
 // A new entry should have/validate 5 required fields: name, address, city, state, and zip. 
 // Display error if each is not filled out.
 
-// $addressBook = [
-//     ['The White House', '1600 Pennsylvania Avenue NW', 'Washington', 'DC', '20500'],
-//     ['Marvel Comics', 'P.O. Box 1527', 'Long Island City', 'NY', '11101'],
-//     ['LucasArts', 'P.O. Box 29901', 'San Francisco', 'CA', '94129-0901']
-// ];
 
 //change to $addressBook to fopen('address_book.csv', 'a');
 $filename = 'address_book.csv';
@@ -83,16 +78,12 @@ if (!empty($_POST)) {
 		    fputcsv($handle, $row);
 		}// foreach
 
-		//redirect to keep browser from offering to resubmit form
-		//add output buffer
+//redirect to keep browser from offering to resubmit form
+//add output buffer
 //header("Location: http://planner.dev/address_book.php");
-	} // elseif
 
-
- 
+	} // elseif 
 }// if post not empty
-
-
 ?>
 
 <!DOCTYPE html>
@@ -122,8 +113,7 @@ if (!empty($_POST)) {
 			<? endforeach; ?>
 			</tr>	
 		<? endforeach; ?>
-			
-				
+							
 </table>
 <form id = "form" role = "form" class="form-inline" method="POST" action="address_book.php">
 	
@@ -135,9 +125,6 @@ if (!empty($_POST)) {
 	<input id="zip" name="zip" >
 	
 	<button class="btn">Add</button>
-
-
-
 </form>
 </body>
 </html>
