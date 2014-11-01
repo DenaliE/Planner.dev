@@ -32,10 +32,12 @@ class Todo {
 
 	}
 	//sanitizes input
-	//why is this not working?
 	public function sanitize(){
 		foreach ($this->items as $key => $value) {
-			//echo $value; dirty
+			//this echos the contents of the whole object. Why?
+			//error 1: Notice: Array to string conversion in /vagrant/sites/planner.dev/public/todo_list.php on line 37
+			//error 2: Warning: strip_tags() expects parameter 1 to be string, array given in /vagrant/sites/planner.dev/public/todo_list.php on line 38
+			echo $value; //dirty
 			$this->items[$key] = htmlspecialchars(strip_tags($value));//Overwrite the value
 			//echo $value; clean
 		}
@@ -99,7 +101,7 @@ class Todo {
  
 $ListObj = new Todo();
 $ListObj->items = $ListObj->open();
-var_dump($ListObj->items);
+//var_dump($ListObj->items);
 
 // 	// Check if we saved a file
 	if (isset($savedFilename)) {
@@ -123,10 +125,11 @@ var_dump($ListObj->items);
 	if (isset($_POST['newitem'])) {
 		//Assign newitem from the form the $itemToAdd.
 		$itemToAdd = $_POST['newitem'];
+		var_dump($itemToAdd);
 		
 
 		//sanitze. this line doesn't work
-		//$itemToAdd = $ListObj->sanitize($itemToAdd);
+		$itemToAdd = $ListObj->sanitize($itemToAdd);
 		
 		//Array push that new item onto the existing list.
 		//alternate way to do array push
@@ -160,13 +163,7 @@ var_dump($ListObj->items);
 	    var_dump($NewListObj);
 	    $ListObj->items = array_merge($ListObj->items, $NewListObj->items);
 	    $ListObj->save();
-	    //check for test file
-	  //   if ($_FILES['file1']['type'] == 'text/plain'){
-		 //    $newItems = 
-			// $contentArray = array_merge($contentArray, $newItems);
-			// upload($contentArray);
-			// save($contentArray);
-	 	// }
+	    
 	 }
 
 ?>
