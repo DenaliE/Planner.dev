@@ -3,9 +3,16 @@
 class Todo {
 	// Define a function which will open your default filename, and return an array of items.
 
-	public $filename = 'list.txt';
+	public $filename = '';
 
 	public $items = [];
+
+	function __construct($filename = 'list.txt')
+    {
+       $this->filename = $filename; 
+    }
+
+
 
 	public function open(){
 
@@ -24,8 +31,6 @@ class Todo {
 		return $contents;
 
 	}
-
-
 	//sanitizes input
 	//why is this not working?
 	public function sanitize(){
@@ -53,36 +58,40 @@ class Todo {
  
 // /* This function accepts an array, saves it to file, and returns nothing. */
  
-	public function upload(){
-		// Verify there were uploaded files and no errors
-		if (count($_FILES) > 0 && $_FILES['file1']['error'] == UPLOAD_ERR_OK) {
-		    // Set the destination directory for uploads
-		    $uploadDir = '/vagrant/sites/planner.dev/public/uploads/';
+	// public function upload(){
+	// 	// Verify there were uploaded files and no errors
+	// 	if (count($_FILES) > 0 && $_FILES['file1']['error'] == UPLOAD_ERR_OK) {
+	// 		var_dump($_FILES);
+	// 	    // Set the destination directory for uploads
+	// 	    $uploadDir = '/vagrant/sites/planner.dev/public/uploads/';
 
-		    // Grab the filename from the uploaded file by using basename
-		    $file = basename($_FILES['file1']['name']);
+	// 	    // Grab the filename from the uploaded file by using basename
+	// 	    $file = basename($_FILES['file1']['name']);
+	// 	    var_dump($file);
 		  
 
-		    // Create the saved filename using the file's original name and our upload directory
-		    $savedFilename = $uploadDir . $filename;
+	// 	    // Create the saved filename using the file's original name and our upload directory
+	// 	    $savedFilename = $uploadDir . $filename;
 		  
 
-		    // Move the file from the temp location to our uploads directory
-		    move_uploaded_file($_FILES['file1']['tmp_name'], $savedFilename);
-
-		    //check for test file
-		    if ($_FILES['file1']['type'] == 'text/plain'){
-		    $newItems = open($savedFilename);
-			$contentArray = array_merge($contentArray, $newItems);
-			save($contentArray);
-		 	}
-		}
+	// 	    // Move the file from the temp location to our uploads directory
+	// 	    move_uploaded_file($_FILES['file1']['tmp_name'], $savedFilename);
 
 
-	return $savedFilename;
+	// 	    //check for test file
+	// 	    if ($_FILES['file1']['type'] == 'text/plain'){
+	// 	    $newItems = open($savedFilename);
+	// 		$contentArray = array_merge($contentArray, $newItems);
+	// 		upload($contentArray);
+	// 		save($contentArray);
+	// 	 	}
+	// 	}
 
 
-	}
+	// return $contentArray;
+
+
+	// }
 
 }
 
@@ -90,6 +99,7 @@ class Todo {
  
 $ListObj = new Todo();
 $ListObj->items = $ListObj->open();
+var_dump($ListObj->items);
 
 // 	// Check if we saved a file
 	if (isset($savedFilename)) {
@@ -115,8 +125,8 @@ $ListObj->items = $ListObj->open();
 		$itemToAdd = $_POST['newitem'];
 		
 
-		//sanitze
-		// $itemToAdd = $ListObj->sanitize($itemToAdd);
+		//sanitze. this line doesn't work
+		//$itemToAdd = $ListObj->sanitize($itemToAdd);
 		
 		//Array push that new item onto the existing list.
 		//alternate way to do array push
@@ -125,6 +135,39 @@ $ListObj->items = $ListObj->open();
 		// Save the whole list to file.
 		$ListObj->save();
 	}
+
+	// Verify there were uploaded files and no errors
+	if (count($_FILES) > 0 && $_FILES['file1']['error'] == UPLOAD_ERR_OK) {
+		var_dump($_FILES);
+	    // Set the destination directory for uploads
+	    $uploadDir = '/vagrant/sites/planner.dev/public/uploads/';
+
+	    // Grab the filename from the uploaded file by using basename
+	    $filename = basename($_FILES['file1']['name']);
+	    var_dump($filename);
+	  
+
+	    // Create the saved filename using the file's original name and our upload directory
+	    $savedFilename = $uploadDir . $filename;
+	  
+
+	    // Move the file from the temp location to our uploads directory
+	    move_uploaded_file($_FILES['file1']['tmp_name'], $savedFilename);
+
+	    $NewListObj = new Todo($filename);
+	    
+	    $NewListObj->items = $NewListObj->open();
+	    var_dump($NewListObj);
+	    $ListObj->items = array_merge($ListObj->items, $NewListObj->items);
+	    $ListObj->save();
+	    //check for test file
+	  //   if ($_FILES['file1']['type'] == 'text/plain'){
+		 //    $newItems = 
+			// $contentArray = array_merge($contentArray, $newItems);
+			// upload($contentArray);
+			// save($contentArray);
+	 	// }
+	 }
 
 ?>
  
