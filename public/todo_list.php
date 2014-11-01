@@ -139,6 +139,7 @@ $ListObj->items = $ListObj->open();
 		$ListObj->save();
 	}
 
+	//to upload files, there needs to be a file with content
 	// Verify there were uploaded files and no errors
 	if (count($_FILES) > 0 && $_FILES['file1']['error'] == UPLOAD_ERR_OK) {
 		var_dump($_FILES);
@@ -157,11 +158,18 @@ $ListObj->items = $ListObj->open();
 	    // Move the file from the temp location to our uploads directory
 	    move_uploaded_file($_FILES['file1']['tmp_name'], $savedFilename);
 
+	    //make new object. pass it the user entered $filename
 	    $NewListObj = new Todo($filename);
 	    
+	    //open the object to access the file contents. When it opens, it looks for the file's content (items)
+	    //Save the file contents to the object's items.
 	    $NewListObj->items = $NewListObj->open();
 	    var_dump($NewListObj);
+
+	    //merge the file's items (contents) to the original objects items
 	    $ListObj->items = array_merge($ListObj->items, $NewListObj->items);
+	    
+	    //save it
 	    $ListObj->save();
 	    
 	 }
