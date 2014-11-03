@@ -1,44 +1,83 @@
 <?php 
 
+
+
+class addressBook {
+
+	public $filename = '';
+	public $contents = [];
+
+	function __construct($filename = 'address_book.csv')
+    {
+       $this->filename = $filename; 
+    }
+	
+    public function open_csv() {
+    	
+    	$filesize = filesize($this->filename);
+
+    	if (file_exists($this->filename) && $filesize > 0){
+    			$handle = fopen($this->filename, 'r');
+
+    			while(!feof($handle)) {
+    			    $row = fgetcsv($handle);
+
+    			    if (!empty($row)) {
+    			        $contents[] = $row;
+    			    }
+    			}
+
+    			fclose($handle);
+    			return $contents;
+    		}
+
+
+    	}
+    	
+		public function save_csv(){
+
+		//write to csv file
+		$handle = fopen($this->filename, 'w');
+		foreach ($this->contents as $row) {
+		    fputcsv($handle, $row);
+		}// foreach
+
+		fclose($handle);
+
+
+		}
+   
+}//closes class
+
 if ($_POST) {
 	var_dump($_POST);
 	//var_dump("phone");
 	//var_dump($_POST['phone']);
 }
 
-function write_csv($addressBook){
-
-	//write to csv file
-$handle = fopen('address_book.csv', 'w');
-foreach ($addressBook as $row) {
-    fputcsv($handle, $row);
-}// foreach
-
-fclose($handle);
-
-}
-
-// Create a function to store a new entry. 
-// A new entry should have/validate 5 required fields: name, address, city, state, and zip. 
 // Display error if each is not filled out.
 
+$addressBook = new addressBook();
+$addressBook->contents = $addressBook->open_csv();
+var_dump($addressBook->contents);
 
-//change to $addressBook to fopen('address_book.csv', 'a');
-$filename = 'address_book.csv';
 
-$handle = fopen($filename, 'r');
 
-$addressBook = [];
 
-while(!feof($handle)) {
-    $row = fgetcsv($handle);
+//rewrite for object
+// $handle = fopen($filename, 'r');
 
-    if (!empty($row)) {
-        $addressBook[] = $row;
-    }//if
-}//while
+// $addressBook = [];
 
-fclose($handle);
+// while(!feof($handle)) {
+//     $row = fgetcsv($handle);
+
+//     if (!empty($row)) {
+//         $addressBook[] = $row;
+//     }//if
+// }//while
+
+// fclose($handle);
 
 //check input
 if (!empty($_POST)) {
@@ -82,8 +121,9 @@ if (!empty($_POST)) {
 
 		var_dump($addressBook);
 
-		$addressBook[] = $newEntry;
-		write_csv($addressBook);
+		$addressBook->contents[] = $newEntry;
+		
+		$addressBook->save_csv();
 
 //redirect to keep browser from offering to resubmit form
 //add output buffer
@@ -94,11 +134,9 @@ if (!empty($_POST)) {
 
 if (isset($_GET['id'])){
 	$id = $_GET['id'];
-	unset($addressBook[$id]);
+	unset($addressBook->contents[$id]);
     
-	write_csv($addressBook);
-
-	//var_dump($id);
+	$addressBook->save_csv();
 }
 
 ?>
@@ -113,24 +151,31 @@ if (isset($_GET['id'])){
 <h1>Contacts</h1>
 <table class=" table table-bordered table-striped">
 	<tr>
-		<th>Delete</th>
 		<th>Name</th>
 		<th>Phone</th>
 		<th>Address</th>
 		<th>City</th>
 		<th>State</th>
 		<th>Zip</th>
+		<th>   </th>
 	</tr>
 		
-		<?  foreach ($addressBook as $key => $address): ?>
-			<tr>	<td><a href="?id=<?=$key?>">  x  </a></td>
-			<?foreach ($address as $key => $value): ?>
-				<!--var_dump($value);-->
-				<!-- insert each in table row -->
-				<td><?=$value?></td>
-			<? endforeach; ?>
-			</tr>	
-		<? endforeach; ?>
+		<?  foreach ($addressBook->contents as $key => $address): ?>
+			<tr>	
+					<?foreach ($address as $value): ?>
+						<!-- var_dump($address);
+						var_dump($value); -->
+						<!-- insert each in table row -->
+						<td>
+							<?=$value?>
+						</td>	
+					<? endforeach; ?> 
+				<td> 
+					<a href="?id=<?=$key?>">  x  </a><!-- targets key of each line, second level array-->
+				</td> 
+			</tr>
+		<? endforeach; ?> 
+		
 							
 </table>
 <form id = "form" role = "form" class="form-inline" method="POST" action="address_book.php">
