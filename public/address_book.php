@@ -33,11 +33,23 @@ class addressBook {
 
 
     	}
+
+    	public function sanitize_array($array){
+			foreach ($array as $value) {
+
+					$clean_array[] = htmlspecialchars(strip_tags($value));//Overwrite the value
+				
+			}
+		
+
+			return $clean_array;
+		
+		}
     	
 		public function save_csv(){
-
+		
 		//write to csv file
-		$handle = fopen($this->filename, 'w');
+		$handle = fopen($this->filename, 'a+');
 		foreach ($this->contents as $row) {
 		    fputcsv($handle, $row);
 		}// foreach
@@ -49,42 +61,19 @@ class addressBook {
    
 }//closes class
 
-if ($_POST) {
-	var_dump($_POST);
-	//var_dump("phone");
-	//var_dump($_POST['phone']);
-}
 
 // Display error if each is not filled out.
 
 $addressBook = new addressBook();
 $addressBook->contents = $addressBook->open_csv();
-var_dump($addressBook->contents);
 
-
-
-
-//rewrite for object
-// $handle = fopen($filename, 'r');
-
-// $addressBook = [];
-
-// while(!feof($handle)) {
-//     $row = fgetcsv($handle);
-
-//     if (!empty($row)) {
-//         $addressBook[] = $row;
-//     }//if
-// }//while
-
-// fclose($handle);
 
 //check input
 if (!empty($_POST)) {
   if (empty($_POST['name']) || empty($_POST['phone']) || empty($_POST['address']) || empty($_POST['city']) || empty($_POST['state']) || empty($_POST['zip'])) {
 
 	$error = "Please enter all fields.";
-	var_dump($error);
+	//var_dump($error);
 	
 	} // if validation
 
@@ -119,11 +108,12 @@ if (!empty($_POST)) {
 			
 		}//else
 
-		var_dump($addressBook);
-
-		$addressBook->contents[] = $newEntry;
 		
-		$addressBook->save_csv();
+
+		$cleanArray = $addressBook->sanitize_array($newEntry);
+		$addressBook->contents[] = $cleanArray;
+		var_dump($cleanArray);
+		$addressBook->save_csv($cleanArray);
 
 //redirect to keep browser from offering to resubmit form
 //add output buffer
@@ -135,7 +125,6 @@ if (!empty($_POST)) {
 if (isset($_GET['id'])){
 	$id = $_GET['id'];
 	unset($addressBook->contents[$id]);
-    
 	$addressBook->save_csv();
 }
 
@@ -163,8 +152,7 @@ if (isset($_GET['id'])){
 		<?  foreach ($addressBook->contents as $key => $address): ?>
 			<tr>	
 					<?foreach ($address as $value): ?>
-						<!-- var_dump($address);
-						var_dump($value); -->
+			
 						<!-- insert each in table row -->
 						<td>
 							<?=$value?>
