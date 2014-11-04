@@ -16,21 +16,24 @@ class addressBook {
     	
     	$filesize = filesize($this->filename);
 
-    	if (file_exists($this->filename) && $filesize > 0){
+    	if (file_exists($this->filename)){
     			$handle = fopen($this->filename, 'r');
 
     			while(!feof($handle)) {
     			    $row = fgetcsv($handle);
 
     			    if (!empty($row)) {
-    			        $contents[] = $row;
+    			        $this->contents[] = $row;
     			    }
     			}
 
     			fclose($handle);
-    			return $contents;
+    			return $this->contents;
     		}
 
+    		else {
+    			touch($this->filename);
+    		}
 
     	}
 
@@ -65,8 +68,8 @@ class addressBook {
 // Display error if each is not filled out.
 
 $addressBook = new addressBook();
-$addressBook->contents = $addressBook->open_csv();
 
+$addressBook->contents = $addressBook->open_csv();
 
 //check input
 if (!empty($_POST)) {
@@ -112,7 +115,6 @@ if (!empty($_POST)) {
 
 		$cleanArray = $addressBook->sanitize_array($newEntry);
 		$addressBook->contents[] = $cleanArray;
-		var_dump($cleanArray);
 		$addressBook->save_csv($cleanArray);
 
 //redirect to keep browser from offering to resubmit form
@@ -148,8 +150,8 @@ if (isset($_GET['id'])){
 		<th>Zip</th>
 		<th>   </th>
 	</tr>
-		
-		<?  foreach ($addressBook->contents as $key => $address): ?>
+		<? if (!is_null($addressBook->contents)) { ?>
+			<?  foreach ($addressBook->contents as $key => $address): ?>
 			<tr>	
 					<?foreach ($address as $value): ?>
 			
@@ -163,8 +165,7 @@ if (isset($_GET['id'])){
 				</td> 
 			</tr>
 		<? endforeach; ?> 
-		
-							
+		<? }; ?>							
 </table>
 <form id = "form" role = "form" class="form-inline" method="POST" action="address_book.php">
 	
