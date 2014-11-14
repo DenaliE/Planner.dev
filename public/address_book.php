@@ -52,9 +52,9 @@ if (!empty($_POST)) {
 
 
 
-		$cleanArray = $addressBook->sanitize_array($newEntry);
-		$addressBook->contents[] = $cleanArray;
-		$addressBook->writeCSV($addressBook->contents);
+$cleanArray = $addressBook->sanitize_array($newEntry);
+$addressBook->contents[] = $cleanArray;
+$addressBook->writeCSV($addressBook->contents);
 
 
 
