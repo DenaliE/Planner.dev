@@ -1,28 +1,8 @@
 <?php
 
 require_once('../inc/filestore.php');
+require_once('../inc/address_book_class.php');
 define('FILE', 'address_book.csv');
-
-class AddressBook extends Filestore
-{
-
-	public $filename = '';
-	public $contents = [];
-
-    	public function sanitize_array($array){
-			foreach ($array as $value) {
-
-					$clean_array[] = htmlspecialchars(strip_tags($value));//Overwrite the value
-
-			}
-
-
-			return $clean_array;
-
-		}
-
-
-}//closes class
 
 
 // Display error if each is not filled out.
