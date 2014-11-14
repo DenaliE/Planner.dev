@@ -8,7 +8,7 @@ class Filestore
     {
         // Sets $this->filename
 
-      $this->filename = $filename;
+          $this->filename = $filename;
    }
 
 
