@@ -4,7 +4,6 @@ require_once('../inc/filestore.php');
 require_once('../inc/address_book_class.php');
 define('FILE', 'address_book.csv');
 
-
 // Display error if each is not filled out.
 
 $addressBook = new AddressBook(FILE);
@@ -13,56 +12,22 @@ $addressBook->contents = $addressBook->read();
 
 //check input
 if (!empty($_POST)) {
-  if (empty($_POST['name']) || empty($_POST['phone']) || empty($_POST['address']) || empty($_POST['city']) || empty($_POST['state']) || empty($_POST['zip'])) {
-
-	echo $error = "Please enter all fields.";
-
-	} // if validation
-
-	else {
-
-		if (isset($_POST['name'])){
-			$newEntry['name'] = $_POST['name'];
-
-		}
-
-		if (isset($_POST['phone'])){
-			$newEntry['phone'] = $_POST['phone'];
-
-		}
-
-		if (isset($_POST['address'])){
-			$newEntry['address'] = $_POST['address'];
-
-		}
-
-		if (isset($_POST['city'])){
-			$newEntry['city'] = $_POST['city'];
-
-		}
-
-		if (isset($_POST['state'])){
-			$newEntry['state'] = $_POST['state'];
-
-		}
-		if (isset($_POST['zip'])){
-			$newEntry['zip'] = $_POST['zip'];
-
-		}//else
+  	if (empty($_POST['name']) || empty($_POST['phone']) || empty($_POST['address']) || empty($_POST['city']) || empty($_POST['state']) || empty($_POST['zip'])) {
+		$error = "Please enter all fields.";
+	} else {
+		$newEntry['name']    = $_POST['name'];
+		$newEntry['phone']   = $_POST['phone'];
+		$newEntry['address'] = $_POST['address'];
+		$newEntry['city']    = $_POST['city'];
+		$newEntry['state']   = $_POST['state'];
+		$newEntry['zip']     = $_POST['zip'];
 
 
+		$cleanArray = $addressBook->sanitize_array($newEntry);
+		$addressBook->contents[] = $cleanArray;
+		$addressBook->write($addressBook->contents);
 
-$cleanArray = $addressBook->sanitize_array($newEntry);
-$addressBook->contents[] = $cleanArray;
-$addressBook->write($addressBook->contents);
-
-
-
-//redirect to keep browser from offering to resubmit form
-//add output buffer
-//header("Location: http://planner.dev/address_book.php");
-
-	} // elseif
+	} // else
 }// if post not empty
 
 if (isset($_GET['id'])){
