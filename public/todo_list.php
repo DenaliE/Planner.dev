@@ -36,7 +36,7 @@ class Todo extends Filestore
 // // Initialize your array by calling your function to open file.
 
 $ListObj = new Todo('../public/list.txt');
-$ListObj->items = $ListObj->readLines();
+$ListObj->items = $ListObj->read();
 //var_dump($ListObj->items);
 
 // 	// Check if we saved a file
@@ -54,7 +54,7 @@ $ListObj->items = $ListObj->readLines();
 		unset($ListObj->items[$id]);
 		//I need a parameter. Do I use items?
 		//Shows up as undefined. Why?
-		$ListObj->writeLines($ListObj->items);
+		$ListObj->write($ListObj->items);
 	}
 
 	// Check for POST Requests
@@ -72,7 +72,7 @@ $ListObj->items = $ListObj->readLines();
 
 		// Save the whole list to file.
 		//I need a parameter here, but can I use $items?
-		$ListObj->writeLines($ListObj->items);
+		$ListObj->write($ListObj->items);
 	}
 
 	//to upload files, there needs to be a file with content
@@ -99,14 +99,14 @@ $ListObj->items = $ListObj->readLines();
 
 	    //open the object to access the file contents. When it opens, it looks for the file's content (items)
 	    //Save the file contents to the object's items.
-	    $NewListObj->items = $NewListObj->readLines();
+	    $NewListObj->items = $NewListObj->read();
 
 
 	    //merge the file's items (contents) to the original objects items
 	    $ListObj->items = array_merge($ListObj->items, $NewListObj->items);
 
 	    //save it
-	    $ListObj->writeLines($ListObj->items);
+	    $ListObj->write($ListObj->items);
 
 	 }
 
