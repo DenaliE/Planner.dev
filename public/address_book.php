@@ -4,6 +4,7 @@ require_once('../inc/filestore.php');
 require_once('../inc/address_book_class.php');
 define('FILE', 'address_book.csv');
 
+
 // Display error if each is not filled out.
 
 $addressBook = new AddressBook(FILE);
@@ -14,6 +15,9 @@ $addressBook->contents = $addressBook->read();
 if (!empty($_POST)) {
   	if (empty($_POST['name']) || empty($_POST['phone']) || empty($_POST['address']) || empty($_POST['city']) || empty($_POST['state']) || empty($_POST['zip'])) {
 		$error = "Please enter all fields.";
+		throw new Exception('One or more fields are empty.');
+	} elseif (strlen($_POST['name']) > 125 || strlen($_POST['phone']) > 125 || strlen($_POST['address']) > 125 || strlen($_POST['city']) > 125 || strlen($_POST['state']) > 125 || strlen($_POST['zip']) > 125){
+		throw new Exception('Individual entries cannot be over 125 characters.');
 	} else {
 		$newEntry['name']    = $_POST['name'];
 		$newEntry['phone']   = $_POST['phone'];
