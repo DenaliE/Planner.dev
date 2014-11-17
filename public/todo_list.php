@@ -8,108 +8,94 @@ class Todo extends Filestore
 
 	public $items = [];
 
-
 	//sanitizes input
 	public function sanitize_array(){
 		foreach ($this->items as $key => $value) {
 			//this echos the contents of the whole object. Why?
 
-			$this->items[$key] = htmlspecialchars(strip_tags($value));//Overwrite the value
-			//var_dump($value); //clean
+			$this->items[$key] = $this->sanitize_string($value);//Overwrite the value
 		}
 
 		return $this->items;
-
 	}
 
 	public function sanitize_string($dirty_string){
-
 		$clean_string = htmlspecialchars(strip_tags($dirty_string));//Overwrite the value
 
 		return $clean_string;
-
 	}
-
-
 }
-
-// // Initialize your array by calling your function to open file.
 
 $ListObj = new Todo('../public/list.txt');
 $ListObj->items = $ListObj->read();
-//var_dump($ListObj->items);
-
-// 	// Check if we saved a file
-	if (isset($savedFilename)) {
-	    // If we did, show a link to the uploaded file
-	    echo "<p>You can download your file <a href='/uploads/{$filename}'>here</a>.</p>";
-	}
-
+// // Initialize your array by calling your function to open file.
 
 // 	// Check for GET Requests
-	    // If there is a get request; remove the appropriate item.
-	if (isset($_GET['id'])){
-		$id = $_GET['id'];
-		$ListObj->items = array_values($ListObj->items);
-		unset($ListObj->items[$id]);
-		//I need a parameter. Do I use items?
-		//Shows up as undefined. Why?
-		$ListObj->write($ListObj->items);
+// If there is a get request; remove the appropriate item.
+if (isset($_GET['id'])){
+	$id = $_GET['id'];
+	unset($ListObj->items[$id]);
+	$ListObj->items = array_values($ListObj->items);
+
+	//I need a parameter. Do I use items?
+	//Shows up as undefined. Why?
+	$ListObj->write($ListObj->items);
+}
+
+// Check for POST Requests
+// If there is a post request; add the items.
+if (isset($_POST['newitem'])) {
+	//Assign newitem from the form the $itemToAdd.
+	$itemToAdd = $_POST['newitem'];
+
+	$itemToAdd = $ListObj->sanitize_string($itemToAdd);
+
+	if (strlen($_POST['newitem'])== 0) {
+		throw new Exception('File is empty.');
 	}
 
-	// Check for POST Requests
-	    // If there is a post request; add the items.
-	//$_POST['nameOfInput']
-	if (isset($_POST['newitem'])) {
-		//Assign newitem from the form the $itemToAdd.
-		$itemToAdd = $_POST['newitem'];
-
-		$itemToAdd = $ListObj->sanitize_string($itemToAdd);
-
-		//Array push that new item onto the existing list.
-		//alternate way to do array push
-		$ListObj->items[] = $itemToAdd;
-
-		// Save the whole list to file.
-		//I need a parameter here, but can I use $items?
-		$ListObj->write($ListObj->items);
+	if (strlen($_POST['newitem']) > 240){
+		throw new Exception('This item cannot be longer than 240 characters.');
 	}
 
-	//to upload files, there needs to be a file with content
-	// Verify there were uploaded files and no errors
-	if (count($_FILES) > 0 && $_FILES['file1']['error'] == UPLOAD_ERR_OK) {
+	//Array push that new item onto the existing list.
+	//alternate way to do array push
+	$ListObj->items[] = $itemToAdd;
 
-	    // Set the destination directory for uploads
-	    $uploadDir = '/vagrant/sites/planner.dev/public/uploads/';
+	// Save the whole list to file.
+	//I need a parameter here, but can I use $items?
+	$ListObj->write($ListObj->items);
+}
 
-	    // Grab the filename from the uploaded file by using basename
-	    $filename = basename($_FILES['file1']['name']);
+//to upload files, there needs to be a file with content
+// Verify there were uploaded files and no errors
+if (count($_FILES) > 0 && $_FILES['file1']['error'] == UPLOAD_ERR_OK) {
+    // Set the destination directory for uploads
+    $uploadDir = '/vagrant/sites/planner.dev/public/uploads/';
 
+    // Grab the filename from the uploaded file by using basename
+    $filename = basename($_FILES['file1']['name']);
 
+    // Create the saved filename using the file's original name and our upload directory
+    $savedFilename = $uploadDir . $filename;
 
-	    // Create the saved filename using the file's original name and our upload directory
-	    $savedFilename = $uploadDir . $filename;
+    // Move the file from the temp location to our uploads directory
+    move_uploaded_file($_FILES['file1']['tmp_name'], $savedFilename);
 
+    //make new object. pass it the user entered $filename
+    $NewListObj = new Todo($filename);
 
-	    // Move the file from the temp location to our uploads directory
-	    move_uploaded_file($_FILES['file1']['tmp_name'], $savedFilename);
+    //open the object to access the file contents. When it opens, it looks for the file's content (items)
+    //Save the file contents to the object's items.
+    $NewListObj->items = $NewListObj->read();
 
-	    //make new object. pass it the user entered $filename
-	    $NewListObj = new Todo($filename);
+    //merge the file's items (contents) to the original objects items
+    $ListObj->items = array_merge($ListObj->items, $NewListObj->items);
 
-	    //open the object to access the file contents. When it opens, it looks for the file's content (items)
-	    //Save the file contents to the object's items.
-	    $NewListObj->items = $NewListObj->read();
+    //save it
+    $ListObj->write($ListObj->items);
 
-
-	    //merge the file's items (contents) to the original objects items
-	    $ListObj->items = array_merge($ListObj->items, $NewListObj->items);
-
-	    //save it
-	    $ListObj->write($ListObj->items);
-
-	 }
-
+}
 ?>
 
 <html>
