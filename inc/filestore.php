@@ -3,19 +3,48 @@
 class Filestore
 {
     public $filename = '';
+    public $isCSV = false;
 
     function __construct($filename)
     {
         // Sets $this->filename
 
           $this->filename = $filename;
+
+          if (substr($filename, -3) == 'csv')
+          {
+            return $this->isCSV = true;
+          }
    }
 
+   public function read() {
+        if ($this->isCSV == true)
+        {
+            return $this->readCSV();
+        }
+
+        else {
+            return $this->readLines();
+        }
+   }
+
+   public function write($array)
+   {
+        if ($this->isCSV == true)
+        {
+            return $this->writeCSV($array);
+        }
+
+        else
+        {
+            return $this->writeLines($array);
+        }
+   }
 
     /**
      * Returns array of lines in $this->filename
      */
-    function readLines()
+    private function readLines()
     {
        $filesize = filesize($this->filename);
 
@@ -36,7 +65,7 @@ class Filestore
     /**
      * Writes each element in $array to a new line in $this->filename
      */
-    function writeLines($cleanArray)
+    private function writeLines($cleanArray)
     {
        $cleanArray = $this->sanitize_array();
        $handle = fopen($this->filename, 'w');
@@ -48,7 +77,7 @@ class Filestore
     /**
      * Reads contents of csv $this->filename, returns an array
      */
-    function readCSV()
+    private function readCSV()
     {
         $filesize = filesize($this->filename);
 
@@ -71,12 +100,14 @@ class Filestore
     /**
      * Writes contents of $array to csv $this->filename
      */
-    function writeCSV($array)
+    private function writeCSV($array)
     {
      //write to csv file
      $handle = fopen($this->filename, 'w');
      foreach ($array as $row) {
+        var_dump($array);
          fputcsv($handle, $row);
+
      }// foreach
 
      fclose($handle);
@@ -84,3 +115,4 @@ class Filestore
     }
 
 }
+
