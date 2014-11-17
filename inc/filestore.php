@@ -2,35 +2,32 @@
 
 class Filestore
 {
-    public $filename = '';
-    public $isCSV = false;
+    protected $filename = '';
+    protected $isCSV = false;
 
     function __construct($filename)
     {
         // Sets $this->filename
 
-          $this->filename = $filename;
+        $this->filename = $filename;
 
-          if (substr($filename, -3) == 'csv')
-          {
+        if (substr($filename, -3) == 'csv') {
             return $this->isCSV = true;
-          }
+        }
    }
 
-   public function read() {
-        if ($this->isCSV == true)
-        {
+   public function read()
+   {
+        if ($this->isCSV) {
             return $this->readCSV();
-        }
-
-        else {
+        } else {
             return $this->readLines();
         }
    }
 
    public function write($array)
    {
-        if ($this->isCSV == true)
+        if ($this->isCSV)
         {
             return $this->writeCSV($array);
         }
@@ -105,7 +102,6 @@ class Filestore
      //write to csv file
      $handle = fopen($this->filename, 'w');
      foreach ($array as $row) {
-        var_dump($array);
          fputcsv($handle, $row);
 
      }// foreach

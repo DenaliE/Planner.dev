@@ -7,24 +7,19 @@ class AddressBook extends Filestore
 
     function __construct($filename)
     {
-          parent::__construct($filename);
           $filename = strtolower($filename);
+          parent::__construct($filename);
 
-          return $filename;
    }
 
     public function sanitize_array($array){
         foreach ($array as $value) {
 
-                $clean_array[] = htmlspecialchars(strip_tags($value));//Overwrite the value
-
+            $clean_array[] = htmlspecialchars(strip_tags($value));//Overwrite the value
         }
 
-
         return $clean_array;
-
     }
-
 
 }//closes class
 
