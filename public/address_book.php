@@ -9,7 +9,7 @@ define('FILE', 'address_book.csv');
 
 $addressBook = new AddressBook(FILE);
 
-$addressBook->contents = $addressBook->readCSV();
+$addressBook->contents = $addressBook->read();
 
 //check input
 if (!empty($_POST)) {
@@ -54,7 +54,7 @@ if (!empty($_POST)) {
 
 $cleanArray = $addressBook->sanitize_array($newEntry);
 $addressBook->contents[] = $cleanArray;
-$addressBook->writeCSV($addressBook->contents);
+$addressBook->write($addressBook->contents);
 
 
 
@@ -69,7 +69,7 @@ if (isset($_GET['id'])){
 	$id = $_GET['id'];
     unset($addressBook->contents[$id]);
     //this needs a parameter, but I do I want to rewrite my whole array?
-    $addressBook->writeCSV($addressBook->contents);
+    $addressBook->write($addressBook->contents);
 }
 
 ?>
