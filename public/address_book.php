@@ -12,13 +12,19 @@ $addressBook = new AddressBook(FILE);
 $addressBook->contents = $addressBook->read();
 
 //check input
-if (!empty($_POST)) {
-  	if (empty($_POST['name']) || empty($_POST['phone']) || empty($_POST['address']) || empty($_POST['city']) || empty($_POST['state']) || empty($_POST['zip'])) {
-		$error = "Please enter all fields.";
-		throw new Exception('One or more fields are empty.');
-	} elseif (strlen($_POST['name']) > 125 || strlen($_POST['phone']) > 125 || strlen($_POST['address']) > 125 || strlen($_POST['city']) > 125 || strlen($_POST['state']) > 125 || strlen($_POST['zip']) > 125){
-		throw new Exception('Individual entries cannot be over 125 characters.');
-	} else {
+if (!empty($_POST))
+{
+	try
+	{
+	  	if (empty($_POST['name']) || empty($_POST['phone']) || empty($_POST['address']) || empty($_POST['city']) || empty($_POST['state']) || empty($_POST['zip'])) {
+
+			$error = "Please enter all fields.";
+			throw new Exception('One or more fields are empty.');
+		}
+		elseif (strlen($_POST['name']) > 125 || strlen($_POST['phone']) > 125 || strlen($_POST['address']) > 125 || strlen($_POST['city']) > 125 || strlen($_POST['state']) > 125 || strlen($_POST['zip']) > 125){
+
+			throw new Exception('Individual entries cannot be over 125 characters.');
+		}
 		$newEntry['name']    = $_POST['name'];
 		$newEntry['phone']   = $_POST['phone'];
 		$newEntry['address'] = $_POST['address'];
@@ -30,9 +36,15 @@ if (!empty($_POST)) {
 		$cleanArray = $addressBook->sanitize_array($newEntry);
 		$addressBook->contents[] = $cleanArray;
 		$addressBook->write($addressBook->contents);
+    }
+	catch (Exception $e)
+	{
+		$error = $e->getMessage();
+	}
 
-	} // else
 }// if post not empty
+
+
 
 if (isset($_GET['id'])){
 	$id = $_GET['id'];
@@ -50,6 +62,9 @@ if (isset($_GET['id'])){
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
 </head>
 <body>
+	<?php if (isset($error)):?>
+    <h2><?=$error;?> Please try again.</h2>
+    <?php endif;?>
 <h1>Contacts</h1>
 <table class=" table table-bordered table-striped">
 	<tr>
