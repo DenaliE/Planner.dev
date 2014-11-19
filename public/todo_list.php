@@ -9,6 +9,7 @@ class Todo extends Filestore
 	public $items = [];
 
 	//sanitizes input
+    //ASK HOW THIS WORKS
 	public function sanitize_array(){
 		foreach ($this->items as $key => $value) {
 			//this echos the contents of the whole object. Why?
@@ -26,7 +27,7 @@ class Todo extends Filestore
 	}
 }
 
-$ListObj = new Todo('../public/list.txt');
+$ListObj = new Todo('uploads/list.txt');
 $ListObj->items = $ListObj->read();
 // // Initialize your array by calling your function to open file.
 
@@ -46,25 +47,32 @@ if (isset($_GET['id'])){
 // If there is a post request; add the items.
 if (isset($_POST['newitem'])) {
 	//Assign newitem from the form the $itemToAdd.
-	$itemToAdd = $_POST['newitem'];
+    $itemToAdd = $_POST['newitem'];
 
-	$itemToAdd = $ListObj->sanitize_string($itemToAdd);
+    $itemToAdd = $ListObj->sanitize_string($itemToAdd);
 
-	if (strlen($_POST['newitem'])== 0) {
-		throw new Exception('File is empty.');
-	}
+    try
+    {
 
-	if (strlen($_POST['newitem']) > 240){
-		throw new Exception('This item cannot be longer than 240 characters.');
-	}
+        if (strlen($_POST['newitem'])== 0) {
+            throw new Exception('File is empty.');
+        }
 
-	//Array push that new item onto the existing list.
-	//alternate way to do array push
-	$ListObj->items[] = $itemToAdd;
+        if (strlen($_POST['newitem']) > 240){
+            throw new Exception('This item cannot be longer than 240 characters.');
+        }
 
-	// Save the whole list to file.
-	//I need a parameter here, but can I use $items?
-	$ListObj->write($ListObj->items);
+      //Array push that new item onto the existing list.
+      //alternate way to do array push
+      $ListObj->items[] = $itemToAdd;
+
+      // Save the whole list to file.
+      //I need a parameter here, but can I use $items?
+      $ListObj->write($ListObj->items);
+    } catch (Exception $e){
+        $error = $e->getMessage();
+    }
+
 }
 
 //to upload files, there needs to be a file with content
@@ -81,18 +89,9 @@ if (count($_FILES) > 0 && $_FILES['file1']['error'] == UPLOAD_ERR_OK) {
 
     // Move the file from the temp location to our uploads directory
     move_uploaded_file($_FILES['file1']['tmp_name'], $savedFilename);
-
-    //make new object. pass it the user entered $filename
-    $NewListObj = new Todo($filename);
-
-    //open the object to access the file contents. When it opens, it looks for the file's content (items)
-    //Save the file contents to the object's items.
-    $NewListObj->items = $NewListObj->read();
-
-    //merge the file's items (contents) to the original objects items
-    $ListObj->items = array_merge($ListObj->items, $NewListObj->items);
-
-    //save it
+    var_dump($_FILES);
+    $new_items = $ListObj->read("uploads/". $filename);
+    $ListObj->items = array_merge($ListObj->items, $new_items);
     $ListObj->write($ListObj->items);
 
 }
@@ -105,6 +104,8 @@ if (count($_FILES) > 0 && $_FILES['file1']['error'] == UPLOAD_ERR_OK) {
     <link rel="stylesheet" type="text/css" href="css/style.css">
 </head>
 <body>
+    <?php if (isset($error)):?> <h2><?=$error;?> Please try again.</h2> <?endif;?>
+
 <h1>Upload File</h1>
 
     <form method="POST" enctype="multipart/form-data" action="/todo_list.php">
@@ -131,7 +132,7 @@ if (count($_FILES) > 0 && $_FILES['file1']['error'] == UPLOAD_ERR_OK) {
 
 <form method="POST" name='add-form' action="todo_list.php">
 	<label for='newitem'>Add a new item: </label>
-	<input name='newitem' id='newitem' type='text'>
+	<input name='newitem' id='newitem' type='text' autofocus>
 	<button>Add Item</button>
 </form>
 
