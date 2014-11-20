@@ -77,19 +77,18 @@ if (isset($_POST['newitem'])) {
 
 //to upload files, there needs to be a file with content
 // Verify there were uploaded files and no errors
-if (count($_FILES) > 0 && $_FILES['file1']['error'] == UPLOAD_ERR_OK) {
+if (count($_FILES) > 0 && $_FILES['new_list']['error'] == UPLOAD_ERR_OK) {
     // Set the destination directory for uploads
     $uploadDir = '/vagrant/sites/planner.dev/public/uploads/';
 
     // Grab the filename from the uploaded file by using basename
-    $filename = basename($_FILES['file1']['name']);
+    $filename = basename($_FILES['new_list']['name']);
 
     // Create the saved filename using the file's original name and our upload directory
     $savedFilename = $uploadDir . $filename;
 
     // Move the file from the temp location to our uploads directory
-    move_uploaded_file($_FILES['file1']['tmp_name'], $savedFilename);
-    var_dump($_FILES);
+    move_uploaded_file($_FILES['new_list']['tmp_name'], $savedFilename);
     $new_items = $ListObj->read("uploads/". $filename);
     $ListObj->items = array_merge($ListObj->items, $new_items);
     $ListObj->write($ListObj->items);
@@ -110,8 +109,8 @@ if (count($_FILES) > 0 && $_FILES['file1']['error'] == UPLOAD_ERR_OK) {
 
     <form method="POST" enctype="multipart/form-data" action="/todo_list.php">
         <p>
-            <label for="file1">File to upload: </label>
-            <input type="file" id="file1" name="file1">
+            <label for="new_list">File to upload: </label>
+            <input type="file" id="new_list" name="new_list">
         </p>
         <p>
             <input type="submit" value="Upload">
