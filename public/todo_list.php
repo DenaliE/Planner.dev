@@ -1,8 +1,13 @@
 <?php
 
-require_once('../inc/filestore.php');
+define('DB_HOST', '127.0.0.1');
+define('DB_NAME', 'todo_db');
+define('DB_USER', 'todo_user');
+define('DB_PASS', 'password');
 
-class Todo extends Filestore
+require_once('../inc/dbconnect.php');
+
+class Todo
 {
 	// Define a function which will open your default filename, and return an array of items.
 
@@ -27,9 +32,21 @@ class Todo extends Filestore
 	}
 }
 
-$ListObj = new Todo('uploads/list.txt');
-$ListObj->items = $ListObj->read();
-// // Initialize your array by calling your function to open file.
+if(!empty($_POST)){
+    $query = $dbc->prepare("INSERT INTO items(content, due_date, priority)
+                       VALUES(:content, :due_date, :priority)");
+
+    $query->bindValue(':content', $_POST['newitem'], PDO::PARAM_STR);
+    $query->bindValue(':due_date', $_POST['due_date'], PDO::PARAM_STR);
+    $query->bindValue(':priority', $_POST['priority'], PDO::PARAM_STR);
+
+    $query->execute();
+
+//$_POST = [];
+}
+
+
+$ListObj = new Todo($query);
 
 // 	// Check for GET Requests
 // If there is a get request; remove the appropriate item.
@@ -74,26 +91,6 @@ if (isset($_POST['newitem'])) {
     }
 
 }
-
-//to upload files, there needs to be a file with content
-// Verify there were uploaded files and no errors
-if (count($_FILES) > 0 && $_FILES['new_list']['error'] == UPLOAD_ERR_OK) {
-    // Set the destination directory for uploads
-    $uploadDir = '/vagrant/sites/planner.dev/public/uploads/';
-
-    // Grab the filename from the uploaded file by using basename
-    $filename = basename($_FILES['new_list']['name']);
-
-    // Create the saved filename using the file's original name and our upload directory
-    $savedFilename = $uploadDir . $filename;
-
-    // Move the file from the temp location to our uploads directory
-    move_uploaded_file($_FILES['new_list']['tmp_name'], $savedFilename);
-    $new_items = $ListObj->read("uploads/". $filename);
-    $ListObj->items = array_merge($ListObj->items, $new_items);
-    $ListObj->write($ListObj->items);
-
-}
 ?>
 
 <html>
@@ -105,17 +102,6 @@ if (count($_FILES) > 0 && $_FILES['new_list']['error'] == UPLOAD_ERR_OK) {
 <body>
     <?php if (isset($error)):?> <h2><?=$error;?> Please try again.</h2> <?endif;?>
 
-<h1>Upload File</h1>
-
-    <form method="POST" enctype="multipart/form-data" action="/todo_list.php">
-        <p>
-            <label for="new_list">File to upload: </label>
-            <input type="file" id="new_list" name="new_list">
-        </p>
-        <p>
-            <input type="submit" value="Upload">
-        </p>
-    </form>
 <ol>
 
 <? foreach ($ListObj->items as $key => $item): ?>
@@ -130,9 +116,17 @@ if (count($_FILES) > 0 && $_FILES['new_list']['error'] == UPLOAD_ERR_OK) {
 <!-- Create a Form to Accept New Items -->
 
 <form method="POST" name='add-form' action="todo_list.php">
-	<label for='newitem'>Add a new item: </label>
+
+    <label for='newitem'>Add a new item: </label>
 	<input name='newitem' id='newitem' type='text' autofocus>
-	<button>Add Item</button>
+
+    <label for='due_date'>Due date: </label>
+    <input name='due_date' id='due_date'>
+
+    <label for='priority'>Priority Level: </label>
+    <input name='priority' id='priority'>
+
+    <button>Add Item</button>
 </form>
 
 </body>
