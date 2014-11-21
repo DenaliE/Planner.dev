@@ -44,8 +44,18 @@ if(!empty($_POST)){
                             VALUES(:content, :due_date, :priority)");
 
     $query->bindValue(':content', $_POST['newitem'], PDO::PARAM_STR);
-    $query->bindValue(':due_date', $_POST['due_date'], PDO::PARAM_STR);
-    $query->bindValue(':priority', $_POST['priority'], PDO::PARAM_STR);
+
+    if (!empty($_POST['due_date'])) {
+        $query->bindValue(':due_date', $_POST['due_date'], PDO::PARAM_STR);
+    } else {
+        $query->bindValue(':due_date', null, PDO::PARAM_NULL);
+    }
+
+    if (!empty($_POST['priority'])) {
+        $query->bindValue(':priority', $_POST['priority'], PDO::PARAM_STR);
+    } else {
+        $query->bindValue(':priority', null, PDO::PARAM_NULL);
+    }
 
     $query->execute();
 }
@@ -58,51 +68,57 @@ $items = $dbc->query('SELECT * FROM items')->fetchAll(PDO::FETCH_ASSOC);
 <html>
 <head>
     <title>TODO App</title>
+
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
+
     <link rel="stylesheet" type="text/css" href="css/style.css">
 </head>
 <body>
+    <div class="container">
     <?php if (isset($error)):?> <h2><?=$error;?> Please try again.</h2> <?endif;?>
 
-<table>
-<? foreach ($items as $item): ?>
-    <tr>
-        <td>
-            <a href="?id=<?=$item['id']?>">X&nbsp;&nbsp;&nbsp;</a>
-
-        </td>
-        <td>
-		<?= $item['content']; ?>
-    </td>
-    </tr>
-<? endforeach ?>
-</table>
-<?php /*
-<? foreach ($rows as $row): ?>
-    <tr>
-        <td><?= $row['name']; ?></td>
-        <td><?= $row['location']; ?></td>
-        <td><?= date('F j, Y', strtotime($row['date_established'])); ?></td>
-        <td><?= $row['area_in_acres']; ?></td>
-        <td><?= $row['description']; ?></td>
+    <table class="table table-bordered table-striped">
+    <? foreach ($items as $item): ?>
+        <tr>
+            <td>
+                <a href="?id=<?=$item['id']?>">X&nbsp;&nbsp;&nbsp;</a>
+            </td>
+            <td>
+        		<?= $item['content']; ?>
+            </td>
+            <td>
+                <?= $item['due_date']; ?>
+            </td>
+            <td>
+                <?= $item['priority']; ?>
+            </td>
         </tr>
-<? endforeach ?>
-*/ ?>
-<!-- Create a Form to Accept New Items -->
+    <? endforeach ?>
+    </table>
+    <?php /*
+            <td><?= date('F j, Y', strtotime($row['date_established'])); ?></td>
+    */ ?>
+    <!-- Create a Form to Accept New Items -->
 
-<form method="POST" name='add-form' action="todo_list.php">
+    <form method="POST" name='add-form' action="todo_list.php">
 
-    <label for='newitem'>Add a new item: </label>
-	<input name='newitem' id='newitem' type='text' autofocus>
+        <label for='newitem'>Add a new item: </label>
+    	<input name='newitem' id='newitem' type='text' autofocus>
 
-    <label for='due_date'>Due date: </label>
-    <input name='due_date' id='due_date'>
+        <label for='due_date'>Due date: </label>
+        <input name='due_date' id='due_date'>
 
-    <label for='priority'>Priority Level: </label>
-    <input name='priority' id='priority'>
+        <label for='priority'>Priority Level: </label>
+        <input name='priority' id='priority'>
 
-    <button>Add Item</button>
-</form>
+        <button type="submit">Add Item</button>
+    </form>
+</div>
+ <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+ <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
 
 </body>
 </html>
