@@ -32,57 +32,29 @@ class Todo
 	}
 }
 
+
+if(isset($_GET['id'])){
+    $deleted = $dbc->prepare('DELETE FROM items WHERE id = :id');
+    $deleted->bindValue(':id', $_GET['id'], PDO::PARAM_INT);
+    $deleted->execute();
+}
+
 if(!empty($_POST)){
     $query = $dbc->prepare("INSERT INTO items(content, due_date, priority)
-                       VALUES(:content, :due_date, :priority)");
+                            VALUES(:content, :due_date, :priority)");
 
     $query->bindValue(':content', $_POST['newitem'], PDO::PARAM_STR);
     $query->bindValue(':due_date', $_POST['due_date'], PDO::PARAM_STR);
     $query->bindValue(':priority', $_POST['priority'], PDO::PARAM_STR);
 
     $query->execute();
-
-//$_POST = [];
 }
 
-$ListObj = new Todo($query);
-// 	// Check for GET Requests
-// If there is a get request; remove the appropriate item.
+$items = $dbc->query('SELECT * FROM items')->fetchAll(PDO::FETCH_ASSOC);
 
-    try
-    {
-
-        if (strlen($_POST['newitem'])== 0) {
-            throw new Exception('File is empty.');
-        }
-
-        if (strlen($_POST['newitem']) > 240){
-            throw new Exception('This item cannot be longer than 240 characters.');
-        }
-
-        if (isset($_GET['id'])){
-            $id = $_GET['id'];
-            unset($ListObj->items[$id]);
-            $ListObj->items = array_values($ListObj->items);
-
-        // Check for POST Requests
-        // If there is a post request; add the items.
-
-        }
-
-        if (isset($_POST['newitem'])) {
-            //Assign newitem from the form the $itemToAdd.
-            $itemToAdd = $_POST['newitem'];
-
-            $itemToAdd = $ListObj->sanitize_string($itemToAdd);
-
-
-        }
-    } catch (Exception $e){
-        $error = $e->getMessage();
-    }
+//if GET['id'] is set delete from table name where id = GET['id']
+//if GET['id'] is set delete from table name where content = row number
 ?>
-
 <html>
 <head>
     <title>TODO App</title>
@@ -92,17 +64,30 @@ $ListObj = new Todo($query);
 <body>
     <?php if (isset($error)):?> <h2><?=$error;?> Please try again.</h2> <?endif;?>
 
-<ol>
+<table>
+<? foreach ($items as $item): ?>
+    <tr>
+        <td>
+            <a href="?id=<?=$item['id']?>">X&nbsp;&nbsp;&nbsp;</a>
 
-<? foreach ($ListObj->items as $key => $item): ?>
-	<li>
-		<a href="?id=<?=$key?>">X</a>
-		<?= $item; ?>
-	</li>
+        </td>
+        <td>
+		<?= $item['content']; ?>
+    </td>
+    </tr>
 <? endforeach ?>
-
-</ol>
-
+</table>
+<?php /*
+<? foreach ($rows as $row): ?>
+    <tr>
+        <td><?= $row['name']; ?></td>
+        <td><?= $row['location']; ?></td>
+        <td><?= date('F j, Y', strtotime($row['date_established'])); ?></td>
+        <td><?= $row['area_in_acres']; ?></td>
+        <td><?= $row['description']; ?></td>
+        </tr>
+<? endforeach ?>
+*/ ?>
 <!-- Create a Form to Accept New Items -->
 
 <form method="POST" name='add-form' action="todo_list.php">
