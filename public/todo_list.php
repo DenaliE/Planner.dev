@@ -45,28 +45,9 @@ if(!empty($_POST)){
 //$_POST = [];
 }
 
-
 $ListObj = new Todo($query);
-
 // 	// Check for GET Requests
 // If there is a get request; remove the appropriate item.
-if (isset($_GET['id'])){
-	$id = $_GET['id'];
-	unset($ListObj->items[$id]);
-	$ListObj->items = array_values($ListObj->items);
-
-	//I need a parameter. Do I use items?
-	//Shows up as undefined. Why?
-	$ListObj->write($ListObj->items);
-}
-
-// Check for POST Requests
-// If there is a post request; add the items.
-if (isset($_POST['newitem'])) {
-	//Assign newitem from the form the $itemToAdd.
-    $itemToAdd = $_POST['newitem'];
-
-    $itemToAdd = $ListObj->sanitize_string($itemToAdd);
 
     try
     {
@@ -79,18 +60,27 @@ if (isset($_POST['newitem'])) {
             throw new Exception('This item cannot be longer than 240 characters.');
         }
 
-      //Array push that new item onto the existing list.
-      //alternate way to do array push
-      $ListObj->items[] = $itemToAdd;
+        if (isset($_GET['id'])){
+            $id = $_GET['id'];
+            unset($ListObj->items[$id]);
+            $ListObj->items = array_values($ListObj->items);
 
-      // Save the whole list to file.
-      //I need a parameter here, but can I use $items?
-      $ListObj->write($ListObj->items);
+        // Check for POST Requests
+        // If there is a post request; add the items.
+
+        }
+
+        if (isset($_POST['newitem'])) {
+            //Assign newitem from the form the $itemToAdd.
+            $itemToAdd = $_POST['newitem'];
+
+            $itemToAdd = $ListObj->sanitize_string($itemToAdd);
+
+
+        }
     } catch (Exception $e){
         $error = $e->getMessage();
     }
-
-}
 ?>
 
 <html>
