@@ -41,7 +41,7 @@ if(isset($_GET['id'])){
 
 if(!empty($_POST)){
     $query = $dbc->prepare("INSERT INTO items(content, due_date, priority)
-                            VALUES(:content, :due_date, :priority)");
+                            VALUES(:content, STR_TO_DATE(:due_date, '%m/%d/%Y'), :priority)");
 
     $query->bindValue(':content', $_POST['newitem'], PDO::PARAM_STR);
 
@@ -75,6 +75,8 @@ $items = $dbc->query('SELECT * FROM items')->fetchAll(PDO::FETCH_ASSOC);
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
 
     <link rel="stylesheet" type="text/css" href="css/style.css">
+
+    <link rel="stylesheet" href="js/time/jquery-ui.min.css">
 </head>
 <body>
     <div class="container">
@@ -90,7 +92,7 @@ $items = $dbc->query('SELECT * FROM items')->fetchAll(PDO::FETCH_ASSOC);
         		<?= $item['content']; ?>
             </td>
             <td>
-                <?= $item['due_date']; ?>
+                <?= date('F j, Y', strtotime($item['due_date'])); ?>
             </td>
             <td>
                 <?= $item['priority']; ?>
@@ -119,6 +121,23 @@ $items = $dbc->query('SELECT * FROM items')->fetchAll(PDO::FETCH_ASSOC);
 </div>
  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+
+
+<script type="text/javascript"src="js/time/jquery-ui.js"></script>
+
+<script>
+       $(document).ready(
+
+  /* This is the function that will get executed after the DOM is fully loaded */
+  function () {
+    $("#due_date").datepicker({
+        changeYear: true, //this option for allowing user to select from year range
+        changeMonth: true,//this option for allowing user to select month
+        dateFormat: "mm/dd/yy" // See format options on parseDate
+    });
+  }
+);
+</script>
 
 </body>
 </html>
