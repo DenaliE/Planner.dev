@@ -104,7 +104,6 @@ class Todo
         // $last = ceil($count/$limit);
 
         $this->last = ceil($count/$limit);
-        var_dump($this->last);
 
         // return $last;
 
