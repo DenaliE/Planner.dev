@@ -32,13 +32,14 @@ class Todo
 	}
 }
 
-
+//deletes items
 if(isset($_GET['id'])){
     $deleted = $dbc->prepare('DELETE FROM items WHERE id = :id');
     $deleted->bindValue(':id', $_GET['id'], PDO::PARAM_INT);
     $deleted->execute();
 }
 
+//after page loads, insert into db
 if(!empty($_POST)){
     $query = $dbc->prepare("INSERT INTO items(content, due_date, priority)
                             VALUES(:content, STR_TO_DATE(:due_date, '%m/%d/%Y'), :priority)");
@@ -60,11 +61,40 @@ if(!empty($_POST)){
     $query->execute();
 }
 
-$items = $dbc->query('SELECT * FROM items')->fetchAll(PDO::FETCH_ASSOC);
+//pagination. Limit 4 per page.
+if(isset($_GET['page']) && $_GET['page'] >= 1){
 
-//if GET['id'] is set delete from table name where id = GET['id']
-//if GET['id'] is set delete from table name where content = row number
+    $pg = $_GET['page'];
+
+} else {
+    $pg = 1;
+}
+
+$num = $pg - 1;
+
+$limit = 4;
+
+$offset = $num * $limit;
+
+$prev = $pg - 1;
+
+$next = $pg + 1;
+
+$stmt = $dbc->prepare("SELECT * FROM items LIMIT :limit OFFSET :offset");
+$stmt->bindValue('offset', $offset, PDO::PARAM_INT);
+$stmt->bindValue('limit', $limit, PDO::PARAM_INT);
+$stmt->execute();
+
+$items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+//count number of items with mySQL to determine last page
+$all_items = $dbc->query("SELECT * FROM items");
+$count = $all_items->rowCount();
+
+$last = ceil($count/4);
+
 ?>
+
 <html>
 <head>
     <title>TODO App</title>
@@ -77,9 +107,15 @@ $items = $dbc->query('SELECT * FROM items')->fetchAll(PDO::FETCH_ASSOC);
     <link rel="stylesheet" type="text/css" href="css/style.css">
 
     <link rel="stylesheet" href="js/time/jquery-ui.min.css">
+    <style type="text/css">
+        table {
+            margin-top: 40px;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
+        <!-- if there is an error, echo it out here -->
     <?php if (isset($error)):?> <h2><?=$error;?> Please try again.</h2> <?endif;?>
 
     <table class="table table-bordered table-striped">
@@ -100,9 +136,7 @@ $items = $dbc->query('SELECT * FROM items')->fetchAll(PDO::FETCH_ASSOC);
         </tr>
     <? endforeach ?>
     </table>
-    <?php /*
-            <td><?= date('F j, Y', strtotime($row['date_established'])); ?></td>
-    */ ?>
+
     <!-- Create a Form to Accept New Items -->
 
     <form method="POST" name='add-form' action="todo_list.php">
@@ -118,6 +152,26 @@ $items = $dbc->query('SELECT * FROM items')->fetchAll(PDO::FETCH_ASSOC);
 
         <button type="submit">Add Item</button>
     </form>
+
+    <!-- previous shows up on pages greater than one-->
+     <? if ($pg > 1) :?>
+
+                <a rel='prev' href="?page=<?= $prev; ?>">
+                    <button class ="btn">Previous </button>
+                </a>
+
+        <? endif; ?>
+
+         <!-- next does not show up on last page-->
+
+        <? if ($pg < $last) :?>
+
+                 <a rel='next' href="?page=<?= $next; ?>">
+                    <button class ="btn">Next</button>
+                </a>
+
+        <? endif; ?>
+
 </div>
  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
