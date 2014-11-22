@@ -11,7 +11,16 @@ class Todo
 {
 	// Define a function which will open your default filename, and return an array of items.
 
-	public $items = [];
+    function __construct($dbc){
+
+        $this->dbc = $dbc;
+    }
+
+    public $items = [];
+
+    public $pg = 1;
+
+    public $last = '';
 
 	//sanitizes input
     //ASK HOW THIS WORKS
@@ -30,68 +39,110 @@ class Todo
 
 		return $clean_string;
 	}
-}
 
-//deletes items
-if(isset($_GET['id'])){
-    $deleted = $dbc->prepare('DELETE FROM items WHERE id = :id');
-    $deleted->bindValue(':id', $_GET['id'], PDO::PARAM_INT);
-    $deleted->execute();
-}
+    public function save() {
+        //after page loads, inserts items entered into db
+        if(!empty($_POST)){
 
-//after page loads, insert into db
-if(!empty($_POST)){
-    $query = $dbc->prepare("INSERT INTO items(content, due_date, priority)
-                            VALUES(:content, STR_TO_DATE(:due_date, '%m/%d/%Y'), :priority)");
+            // you can do this instead of $this->dbc everytime if you put this at the top: $dbc = $this->dbc;
+            $query = $this->dbc->prepare("INSERT INTO items(content, due_date, priority)
+                                    VALUES(:content, STR_TO_DATE(:due_date, '%m/%d/%Y'), :priority)");
 
-    $query->bindValue(':content', $_POST['newitem'], PDO::PARAM_STR);
+            $query->bindValue(':content', $_POST['newitem'], PDO::PARAM_STR);
 
-    if (!empty($_POST['due_date'])) {
-        $query->bindValue(':due_date', $_POST['due_date'], PDO::PARAM_STR);
-    } else {
-        $query->bindValue(':due_date', null, PDO::PARAM_NULL);
+            if (!empty($_POST['due_date'])) {
+                $query->bindValue(':due_date', $_POST['due_date'], PDO::PARAM_STR);
+            } else {
+                $query->bindValue(':due_date', null, PDO::PARAM_NULL);
+            }//end if due_date not empty
+
+            if (!empty($_POST['priority'])) {
+                $query->bindValue(':priority', $_POST['priority'], PDO::PARAM_STR);
+            } else {
+                $query->bindValue(':priority', null, PDO::PARAM_NULL);
+            }//end if priority not empty
+
+            $query->execute();
+        }//end if post not empty
+
+    }//end save function
+
+    public function pagination() {
+        //pagination. Limit 4 per page.
+
+        // If there is some GET data, set pages properties accordingly.
+        if(isset($_GET['page']) && $_GET['page'] >= 1){
+
+            $this->pg = $_GET['page'];
+
+        }
+
+        // Default Settings for Pagination
+        else {
+
+            $this->pg = 1;
+
+        }
+
+        $num = $this->pg - 1;
+
+        $limit = 4;
+
+        $offset = $num * $limit;
+
+        $stmt = $this->dbc->prepare("SELECT * FROM items LIMIT :limit OFFSET :offset");
+        $stmt->bindValue('offset', $offset, PDO::PARAM_INT);
+        $stmt->bindValue('limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $this->items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        //count number of items with mySQL to determine last page
+        $all_items = $this->dbc->query("SELECT * FROM items");
+        $count = $all_items->rowCount();
+
+        // $last = ceil($count/$limit);
+
+        $this->last = ceil($count/$limit);
+        var_dump($this->last);
+
+        // return $last;
+
     }
 
-    if (!empty($_POST['priority'])) {
-        $query->bindValue(':priority', $_POST['priority'], PDO::PARAM_STR);
-    } else {
-        $query->bindValue(':priority', null, PDO::PARAM_NULL);
-    }
+    public function delete(){
 
-    $query->execute();
+        $dbc = $this->dbc;
+     //deletes items
+        if(isset($_GET['id'])){
+            $deleted = $dbc->prepare('DELETE FROM items WHERE id = :id');
+            $deleted->bindValue(':id', $_GET['id'], PDO::PARAM_INT);
+            $deleted->execute();
+        }// end if id is set
+
+    }//ends delete function
+
+}//ends class
+
+//make new object
+$list = new Todo($dbc);
+
+// if there is an id to delete, delete it
+if (isset($_GET['id'])) {
+    $list->delete($_GET['id']);
+    // then save
+    $list->save();
 }
 
-//pagination. Limit 4 per page.
-if(isset($_GET['page']) && $_GET['page'] >= 1){
-
-    $pg = $_GET['page'];
-
-} else {
-    $pg = 1;
+// if an item is added, then save
+if (isset($query)){
+   $list->save();
 }
 
-$num = $pg - 1;
+$list->pagination();
 
-$limit = 4;
-
-$offset = $num * $limit;
-
-$prev = $pg - 1;
-
-$next = $pg + 1;
-
-$stmt = $dbc->prepare("SELECT * FROM items LIMIT :limit OFFSET :offset");
-$stmt->bindValue('offset', $offset, PDO::PARAM_INT);
-$stmt->bindValue('limit', $limit, PDO::PARAM_INT);
-$stmt->execute();
-
-$items = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-//count number of items with mySQL to determine last page
-$all_items = $dbc->query("SELECT * FROM items");
-$count = $all_items->rowCount();
-
-$last = ceil($count/4);
+$prev = $list->pg - 1;
+$next = $list->pg + 1;
 
 ?>
 
@@ -119,7 +170,7 @@ $last = ceil($count/4);
     <?php if (isset($error)):?> <h2><?=$error;?> Please try again.</h2> <?endif;?>
 
     <table class="table table-bordered table-striped">
-    <? foreach ($items as $item): ?>
+    <? foreach ($list->items as $item): ?>
         <tr>
             <td>
                 <a href="?id=<?=$item['id']?>">X&nbsp;&nbsp;&nbsp;</a>
@@ -154,7 +205,7 @@ $last = ceil($count/4);
     </form>
 
     <!-- previous shows up on pages greater than one-->
-     <? if ($pg > 1) :?>
+     <? if ($list->pg > 1) :?>
 
                 <a rel='prev' href="?page=<?= $prev; ?>">
                     <button class ="btn">Previous </button>
@@ -164,7 +215,7 @@ $last = ceil($count/4);
 
          <!-- next does not show up on last page-->
 
-        <? if ($pg < $last) :?>
+        <? if ($list->pg < $list->last) :?>
 
                  <a rel='next' href="?page=<?= $next; ?>">
                     <button class ="btn">Next</button>
