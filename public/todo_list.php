@@ -91,8 +91,8 @@ class Todo
         $offset = $num * $limit;
 
         $stmt = $this->dbc->prepare("SELECT * FROM items LIMIT :limit OFFSET :offset");
-        $stmt->bindValue('offset', $offset, PDO::PARAM_INT);
-        $stmt->bindValue('limit', $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
         $stmt->execute();
 
         $this->items = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -109,15 +109,15 @@ class Todo
 
     }
 
-    public function delete(){
+    public function delete($id){
 
         $dbc = $this->dbc;
-     //deletes items
-        if(isset($_GET['id'])){
-            $deleted = $dbc->prepare('DELETE FROM items WHERE id = :id');
-            $deleted->bindValue(':id', $_GET['id'], PDO::PARAM_INT);
-            $deleted->execute();
-        }// end if id is set
+
+        //deletes items
+        $deleted = $dbc->prepare('DELETE FROM items WHERE id = :id');
+        $deleted->bindValue(':id', $id, PDO::PARAM_INT);
+        $deleted->execute();
+
 
     }//ends delete function
 
@@ -129,12 +129,10 @@ $list = new Todo($dbc);
 // if there is an id to delete, delete it
 if (isset($_GET['id'])) {
     $list->delete($_GET['id']);
-    // then save
-    $list->save();
 }
 
 // if an item is added, then save
-if (isset($query)){
+if (!empty($_POST)){
    $list->save();
 }
 
@@ -178,6 +176,7 @@ $next = $list->pg + 1;
         		<?= $item['content']; ?>
             </td>
             <td>
+                <!-- if due_date is null, skip -->
                 <?= date('F j, Y', strtotime($item['due_date'])); ?>
             </td>
             <td>
