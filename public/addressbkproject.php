@@ -1,9 +1,11 @@
 <?
 require '../inc/db_connect.php';
 
-$addresses = $dbc->query("SELECT * FROM people LEFT JOIN address ON address.people_id = people.id");
 
 if(!empty($_POST)){
+    var_dump($_POST);
+
+
     $query = $dbc->prepare("INSERT INTO people(first_name, last_name, phone)
                             VALUES(:first_name, :last_name, :phone)");
 
@@ -12,9 +14,9 @@ if(!empty($_POST)){
     $query->bindValue(':phone', $_POST['phone_number'], PDO::PARAM_STR);
 
     $query->execute();
-
-    var_dump($query);
 }
+
+$addresses = $dbc->query("SELECT * FROM people LEFT JOIN address ON address.people_id = people.id");
 
 ?>
 
@@ -73,7 +75,7 @@ if(!empty($_POST)){
     </table>
 
     <div class='row'>
-        <form role="form">
+        <form role="form" method= "POST" action="addressbkproject.php">
             <div class="form-group col-md-3">
                 <label for='first_name'>First Name</label>
                 <input type='text' id='first_name' name='first_name' class="form-control">
