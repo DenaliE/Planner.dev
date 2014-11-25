@@ -3,35 +3,31 @@ require '../inc/db_connect.php';
 
 
 if(!empty($_POST)){
-    var_dump($_POST);
+    $query = $dbc->prepare("INSERT INTO people(first_name, last_name, phone)
+                            VALUES(:first_name, :last_name, :phone)");
 
+    $query->bindValue(':first_name', $_POST['first_name'], PDO::PARAM_STR);
+    $query->bindValue(':last_name', $_POST['last_name'], PDO::PARAM_STR);
+    $query->bindValue(':phone', $_POST['phone_number'], PDO::PARAM_STR);
 
-$query = $dbc->prepare("INSERT INTO people(first_name, last_name, phone)
-                        VALUES(:first_name, :last_name, :phone)");
-
-$query->bindValue(':first_name', $_POST['first_name'], PDO::PARAM_STR);
-$query->bindValue(':last_name', $_POST['last_name'], PDO::PARAM_STR);
-$query->bindValue(':phone', $_POST['phone_number'], PDO::PARAM_STR);
-
-$query->execute();
+    $query->execute();
 }
 
 
 if(isset($_GET['a_id'])){
-$deleted_address = $dbc->prepare('DELETE FROM address WHERE id = :id');
-$deleted_address->bindValue(':id', $_GET['a_id'], PDO::PARAM_INT);
-$deleted_address->execute();
+    $deleted_address = $dbc->prepare('DELETE FROM address WHERE id = :id');
+    $deleted_address->bindValue(':id', $_GET['a_id'], PDO::PARAM_INT);
+    $deleted_address->execute();
 }
 
 if(isset($_GET['id'])){
+    $deleted_address = $dbc->prepare('DELETE FROM address WHERE people_id = :id');
+    $deleted_address->bindValue(':id', $_GET['id'], PDO::PARAM_INT);
+    $deleted_address->execute();
 
-$deleted_address = $dbc->prepare('DELETE FROM address WHERE people_id = :id');
-$deleted_address->bindValue(':id', $_GET['id'], PDO::PARAM_INT);
-$deleted_address->execute();
-
-$deleted_person = $dbc->prepare('DELETE FROM people WHERE id = :id');
-$deleted_person->bindValue(':id', $_GET['id'], PDO::PARAM_INT);
-$deleted_person->execute();
+    $deleted_person = $dbc->prepare('DELETE FROM people WHERE id = :id');
+    $deleted_person->bindValue(':id', $_GET['id'], PDO::PARAM_INT);
+    $deleted_person->execute();
 }
 
 $people_statement = $dbc->query("SELECT people.id, first_name, last_name, phone, address.id
@@ -83,6 +79,7 @@ $people = $people_statement->fetchAll(PDO::FETCH_ASSOC);
                     <?= $person['state'] ?>
 
                     <?= $person['zip'] ?>
+                    <a class='btn btn-danger btn-sm' href="add_address.php?id=<?=$person['id']?>">Add</a>
                     <a class='btn' href="?a_id=<?= $person['a_id'] ?>">Remove</a>
                 </td>
             </tr>
@@ -105,7 +102,7 @@ $people = $people_statement->fetchAll(PDO::FETCH_ASSOC);
                 <label for='phone_number'>Phone Number</label>
                 <input type='text' id='phone_number' name='phone_number' class="form-control">
             </div>
-            <button id='addperson' type='submit' class="btn btn-success">Add</button>
+            <button id='addperson' type='submit' class="btn btn-success">Add Person</button>
         </form>
     </div>
 </body>
