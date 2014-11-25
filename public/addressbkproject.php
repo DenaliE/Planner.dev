@@ -6,18 +6,41 @@ if(!empty($_POST)){
     var_dump($_POST);
 
 
-    $query = $dbc->prepare("INSERT INTO people(first_name, last_name, phone)
-                            VALUES(:first_name, :last_name, :phone)");
+$query = $dbc->prepare("INSERT INTO people(first_name, last_name, phone)
+                        VALUES(:first_name, :last_name, :phone)");
 
-    $query->bindValue(':first_name', $_POST['first_name'], PDO::PARAM_STR);
-    $query->bindValue(':last_name', $_POST['last_name'], PDO::PARAM_STR);
-    $query->bindValue(':phone', $_POST['phone_number'], PDO::PARAM_STR);
+$query->bindValue(':first_name', $_POST['first_name'], PDO::PARAM_STR);
+$query->bindValue(':last_name', $_POST['last_name'], PDO::PARAM_STR);
+$query->bindValue(':phone', $_POST['phone_number'], PDO::PARAM_STR);
 
-    $query->execute();
+$query->execute();
 }
 
-$addresses = $dbc->query("SELECT * FROM people LEFT JOIN address ON address.people_id = people.id");
 
+if(isset($_GET['a_id'])){
+$deleted_address = $dbc->prepare('DELETE FROM address WHERE id = :id');
+$deleted_address->bindValue(':id', $_GET['a_id'], PDO::PARAM_INT);
+$deleted_address->execute();
+}
+
+if(isset($_GET['id'])){
+
+$deleted_address = $dbc->prepare('DELETE FROM address WHERE people_id = :id');
+$deleted_address->bindValue(':id', $_GET['id'], PDO::PARAM_INT);
+$deleted_address->execute();
+
+$deleted_person = $dbc->prepare('DELETE FROM people WHERE id = :id');
+$deleted_person->bindValue(':id', $_GET['id'], PDO::PARAM_INT);
+$deleted_person->execute();
+}
+
+$people_statement = $dbc->query("SELECT people.id, first_name, last_name, phone, address.id
+                        AS a_id, address.street, address.state,address.city, address.zip
+                        FROM people
+                        LEFT JOIN address
+                        ON address.people_id = people.id");
+
+$people = $people_statement->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <html>
@@ -38,37 +61,29 @@ $addresses = $dbc->query("SELECT * FROM people LEFT JOIN address ON address.peop
 
     <table class='table table-bordered'>
             <tr>
-                <th>First name</th>
-                <th>Last name</th>
-                <th>Phone</th>
+                <th>Person</th>
                 <th>Address</th>
-                <th>City</th>
-                <th>State</th>
-                <th>Zip</th>
 
             </tr>
-        <? foreach($addresses as $address):?>
+        <? foreach($people as $person):?>
             <tr>
                 <td>
-                    <?= $address['first_name'] ?>
+                    <?= $person['first_name'] ?>
+
+                    <?= $person['last_name'] ?>
+
+                    <?= $person['phone'] ?>
+                    <a class='btn' href="?id=<?= $person['id'] ?>">Remove</a>
                 </td>
                 <td>
-                    <?= $address['last_name'] ?>
-                </td>
-                <td>
-                    <?= $address['phone'] ?>
-                </td>
-                <td>
-                    <?= $address['Street'] ?>
-                </td>
-                <td>
-                    <?= $address['City'] ?>
-                </td>
-                <td>
-                    <?= $address['State'] ?>
-                </td>
-                <td>
-                    <?= $address['Zip'] ?>
+                    <?= $person['street'] ?>
+
+                    <?= $person['city'] ?>
+
+                    <?= $person['state'] ?>
+
+                    <?= $person['zip'] ?>
+                    <a class='btn' href="?a_id=<?= $person['a_id'] ?>">Remove</a>
                 </td>
             </tr>
         <? endforeach ?>
