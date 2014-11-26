@@ -18,9 +18,9 @@ if(!empty($_POST)){
 
 if(isset($_GET['a_id'])){
 
-    $address_statment = $dbc->prepare('SELECT * FROM address WHERE id = :id');
-    $address_statment->bindValue(':id', $_GET['a_id'], PDO::PARAM_INT);
-    $address_statment->execute();
+    $address_statement = $dbc->prepare('SELECT * FROM address WHERE id = :id');
+    $address_statement->bindValue(':id', $_GET['a_id'], PDO::PARAM_INT);
+    $address_statement->execute();
 
     $address = $address_statement->fetchObject("Address", [$dbc]);
 
