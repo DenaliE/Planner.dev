@@ -1,18 +1,17 @@
 <?
-require '../inc/db_connect.php';
+require '../inc/person.class.php';
+require '../inc/address.class.php';
 
+
+if(isset($_GET['id'])) {
+
+    $result = $address_statment->fetchObject("Person");
+
+}//end if get set
 
 if(!empty($_POST)){
-    $query = $dbc->prepare("INSERT INTO people(first_name, last_name, phone)
-                            VALUES(:first_name, :last_name, :phone)");
-
-    $query->bindValue(':first_name', $_POST['first_name'], PDO::PARAM_STR);
-    $query->bindValue(':last_name', $_POST['last_name'], PDO::PARAM_STR);
-    $query->bindValue(':phone', $_POST['phone_number'], PDO::PARAM_STR);
-
-    $query->execute();
+    $result->insert();
 }
-
 
 if(isset($_GET['a_id'])){
     $deleted_address = $dbc->prepare('DELETE FROM address WHERE id = :id');

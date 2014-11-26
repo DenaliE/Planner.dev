@@ -1,36 +1,13 @@
 <?
-require '../inc/db_connect.php';
+require '../inc/person.class.php';
+require '../inc/address.class.php';
 
-class Person {
-    public $id;
-    public $first_name;
-    public $last_name;
-    public $phone;
-
-    public function insert()
-    {
-        $query = $this->dbc->prepare("INSERT INTO people(first_name, last_name, phone)
-                                      VALUES(:first_name, :last_name, :phone)");
-
-        $query->bindValue(':first_name', $this->first_name, PDO::PARAM_STR);
-        $query->bindValue(':last_name', $this->last_name, PDO::PARAM_STR);
-        $query->bindValue(':phone', $this->phone_number, PDO::PARAM_STR);
-
-        $query->execute();
-
-    }
-}//end of class
 
 if(isset($_GET['id'])) {
-    $address_statment = $dbc->prepare('SELECT id, first_name, last_name, phone FROM people WHERE id =:id');
-    $address_statment->bindValue(':id', $_GET['id'], PDO::PARAM_INT);
-    $address_statment->execute();
 
     $result = $address_statment->fetchObject("Person");
 
-
 }//end if get set
-
 
 ?>
 <html>
