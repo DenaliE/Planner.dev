@@ -1,17 +1,33 @@
 <?
-require '../inc/person.class.php';
-require '../inc/address.class.php';
+require_once '../inc/person.class.php';
+require_once '../inc/address.class.php';
 
 
 if(isset($_GET['id'])) {
 
-    $person = $address_statment->fetchObject("Person");
-    $address = $query->fetchObject("Address");
+    //make query for person
+
+    $person_statment = $dbc->prepare('SELECT id, first_name, last_name, phone FROM people WHERE id = :id');
+    $person_statment->bindValue(':id', $_GET['id'], PDO::PARAM_INT);
+    $person_statment->execute();
+
+    $person = $person_statment->fetchObject("Person", [$dbc]);
 
 
 }//end if get set
 
 if(!empty($_POST)){
+
+    //create a new object to hold the user's values, which pairs with the classes properties
+    $address = new Address($dbc);
+
+    //capture user input
+    $address->street = $_POST['street'];
+    $address->city = $_POST['city'];
+    $address->state = $_POST['state'];
+    $address->zip = $_POST['zip'];
+    $address->people_id = $_GET['id'];
+
     $address->insert();
 }
 
@@ -34,8 +50,8 @@ if(!empty($_POST)){
 
     <form role='form' method= "POST" action="add_address.php?id=<?=$_GET['id']?>">
         <div class="form-group">
-            <label for='address'>Address:</label>
-            <input  type='text' class="form-control" id='address' name='address'>
+            <label for='street'>Address:</label>
+            <input  type='text' class="form-control" id='street' name='street'>
         </div>
 
         <div class="form-group">
