@@ -2,20 +2,6 @@
 require_once '../inc/person.class.php';
 require_once '../inc/address.class.php';
 
-
-if(isset($_GET['id'])) {
-
-    //make query for person
-
-    $person_statment = $dbc->prepare('SELECT id, first_name, last_name, phone FROM people WHERE id = :id');
-    $person_statment->bindValue(':id', $_GET['id'], PDO::PARAM_INT);
-    $person_statment->execute();
-
-    $person = $person_statment->fetchObject("Person", [$dbc]);
-
-
-}//end if get set
-
 if(!empty($_POST)){
 
     //create a new object to hold the user's values, which pairs with the classes properties

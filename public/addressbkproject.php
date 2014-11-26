@@ -3,14 +3,16 @@ require '../inc/person.class.php';
 require '../inc/address.class.php';
 
 
-if(isset($_GET['id'])) {
-
-    $person = $address_statment->fetchObject("Person");
-    $address = $query->fetchObject("Address");
-
-}//end if get set
-
 if(!empty($_POST)){
+
+    //create a new object to hold the user's values, which pairs with the classes properties
+    $person = new Person($dbc);
+
+    //capture user input
+    $person->first_name = $_POST['first_name'];
+    $person->last_name = $_POST['last_name'];
+    $person->phone = $_POST['phone'];
+
     $person->insert();
 }
 
@@ -19,6 +21,15 @@ if(isset($_GET['a_id'])){
 }
 
 if(isset($_GET['id'])){
+
+    //make query for person
+
+    $person_statment = $dbc->prepare('SELECT id, first_name, last_name, phone FROM people WHERE id = :id');
+    $person_statment->bindValue(':id', $_GET['id'], PDO::PARAM_INT);
+    $person_statment->execute();
+
+    $person = $person_statment->fetchObject("Person", [$dbc]);
+
     $person->delete();
 }
 
