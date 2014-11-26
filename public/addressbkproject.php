@@ -1,6 +1,6 @@
 <?
-require '../inc/person.class.php';
-require '../inc/address.class.php';
+require_once '../inc/person.class.php';
+require_once '../inc/address.class.php';
 
 
 if(!empty($_POST)){
@@ -103,7 +103,7 @@ $people = $people_statement->fetchAll(PDO::FETCH_ASSOC);
 
             <div class="form-group col-md-3">
                 <label for='phone_number'>Phone Number</label>
-                <input type='text' id='phone_number' name='phone_number' class="form-control">
+                <input type='text' id='phone_number' name='phone' class="form-control">
             </div>
             <button id='addperson' type='submit' class="btn btn-success">Add Person</button>
         </form>
