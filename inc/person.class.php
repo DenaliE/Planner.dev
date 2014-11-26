@@ -1,8 +1,9 @@
 <?php
 
-require '../inc/model.class.php';
+require_once '../inc/model.class.php';
 
-class Person extends Model{
+class Person extends Model {
+
     public $id;
     public $first_name;
     public $last_name;
@@ -29,6 +30,6 @@ class Person extends Model{
         $deleted_person = $dbc->prepare('DELETE FROM people WHERE id = :id');
         $deleted_person->bindValue(':id', $_GET['id'], PDO::PARAM_INT);
         $deleted_person->execute();
-    }
+    }//end delete
 
 }//end of class

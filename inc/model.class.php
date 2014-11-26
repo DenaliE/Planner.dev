@@ -2,12 +2,14 @@
 
 require 'db_connect.php';
 
-class Model {
+abstract class Model {
 
-function __construct($dbc){
-    $dbc = $this->dbc;
-}//end construct
+    protected $dbc;
 
-function abstract insert(){};
-function abstract delete(){};
+    function __construct($dbc){
+        $this->dbc = $dbc;
+    }//end construct
+
+    abstract function insert();
+    abstract function delete();
 }//end class
