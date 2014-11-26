@@ -27,7 +27,7 @@ if(!empty($_POST)){
 
     $address->insert();
 
-
+    header('Location: addressbkproject.php');
 }
 
 ?>
