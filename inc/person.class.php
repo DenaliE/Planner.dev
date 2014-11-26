@@ -23,11 +23,11 @@ class Person extends Model {
     }//end of insert
 
     public function delete(){
-        $deleted_address = $dbc->prepare('DELETE FROM address WHERE people_id = :id');
+        $deleted_address = $this->dbc->prepare('DELETE FROM address WHERE people_id = :id');
         $deleted_address->bindValue(':id', $this->id, PDO::PARAM_INT);
         $deleted_address->execute();
 
-        $deleted_person = $dbc->prepare('DELETE FROM people WHERE id = :id');
+        $deleted_person = $this->dbc->prepare('DELETE FROM people WHERE id = :id');
         $deleted_person->bindValue(':id', $this->id, PDO::PARAM_INT);
         $deleted_person->execute();
     }//end delete
