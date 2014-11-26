@@ -16,7 +16,7 @@ class Person extends Model {
 
         $query->bindValue(':first_name', $this->first_name, PDO::PARAM_STR);
         $query->bindValue(':last_name', $this->last_name, PDO::PARAM_STR);
-        $query->bindValue(':phone', $this->phone_number, PDO::PARAM_STR);
+        $query->bindValue(':phone', $this->phone, PDO::PARAM_STR);
 
         $query->execute();
 
@@ -24,11 +24,11 @@ class Person extends Model {
 
     public function delete(){
         $deleted_address = $dbc->prepare('DELETE FROM address WHERE people_id = :id');
-        $deleted_address->bindValue(':id', $_GET['id'], PDO::PARAM_INT);
+        $deleted_address->bindValue(':id', $this->id, PDO::PARAM_INT);
         $deleted_address->execute();
 
         $deleted_person = $dbc->prepare('DELETE FROM people WHERE id = :id');
-        $deleted_person->bindValue(':id', $_GET['id'], PDO::PARAM_INT);
+        $deleted_person->bindValue(':id', $this->id, PDO::PARAM_INT);
         $deleted_person->execute();
     }//end delete
 

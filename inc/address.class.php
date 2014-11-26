@@ -25,7 +25,7 @@ class Address extends Model {
 
     public function delete(){
         $deleted_address = $dbc->prepare('DELETE FROM address WHERE id = :id');
-        $deleted_address->bindValue(':id', $_GET['a_id'], PDO::PARAM_INT);
+        $deleted_address->bindValue(':id', $this['people_id'], PDO::PARAM_INT);
         $deleted_address->execute();
     }//end delete
 }//end class
