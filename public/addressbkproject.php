@@ -5,28 +5,21 @@ require '../inc/address.class.php';
 
 if(isset($_GET['id'])) {
 
-    $result = $address_statment->fetchObject("Person");
+    $person = $address_statment->fetchObject("Person");
+    $address = $query->fetchObject("Address");
 
 }//end if get set
 
 if(!empty($_POST)){
-    $result->insert();
+    $person->insert();
 }
 
 if(isset($_GET['a_id'])){
-    $deleted_address = $dbc->prepare('DELETE FROM address WHERE id = :id');
-    $deleted_address->bindValue(':id', $_GET['a_id'], PDO::PARAM_INT);
-    $deleted_address->execute();
+    $address->delete();
 }
 
 if(isset($_GET['id'])){
-    $deleted_address = $dbc->prepare('DELETE FROM address WHERE people_id = :id');
-    $deleted_address->bindValue(':id', $_GET['id'], PDO::PARAM_INT);
-    $deleted_address->execute();
-
-    $deleted_person = $dbc->prepare('DELETE FROM people WHERE id = :id');
-    $deleted_person->bindValue(':id', $_GET['id'], PDO::PARAM_INT);
-    $deleted_person->execute();
+    $person->delete();
 }
 
 $people_statement = $dbc->query("SELECT people.id, first_name, last_name, phone, address.id

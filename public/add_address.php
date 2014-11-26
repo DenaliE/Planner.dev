@@ -5,9 +5,15 @@ require '../inc/address.class.php';
 
 if(isset($_GET['id'])) {
 
-    $result = $address_statment->fetchObject("Person");
+    $person = $address_statment->fetchObject("Person");
+    $address = $query->fetchObject("Address");
+
 
 }//end if get set
+
+if(!empty($_POST)){
+    $address->insert();
+}
 
 ?>
 <html>
@@ -24,7 +30,7 @@ if(isset($_GET['id'])) {
 </head>
 <body>
 <div class='container'>
-    <h1>Add Address to <?= $result->first_name ?> <?= $result->last_name ?></h1>
+    <h1>Add Address to <?= $person->first_name ?> <?= $person->last_name ?></h1>
 
     <form role='form' method= "POST" action="add_address.php?id=<?=$_GET['id']?>">
         <div class="form-group">
