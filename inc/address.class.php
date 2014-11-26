@@ -1,5 +1,5 @@
 <?
-require '../inc/modal.class.php';
+require '../inc/model.class.php';
 
 class Address extends Model{
     $id;
