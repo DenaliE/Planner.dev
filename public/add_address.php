@@ -3,7 +3,7 @@ require_once '../inc/person.class.php';
 require_once '../inc/address.class.php';
 
 if(isset($_GET['id'])) {
-    //make query for person
+    //make query for person (get information stored in db).
     $person_statment = $dbc->prepare('SELECT id, first_name, last_name, phone FROM people WHERE id = :id');
     $person_statment->bindValue(':id', $_GET['id'], PDO::PARAM_INT);
     $person_statment->execute();
@@ -15,7 +15,7 @@ if(isset($_GET['id'])) {
 
 if(!empty($_POST)){
 
-    //create a new object to hold the user's values, which pairs with the classes properties
+    //create a new object to hold the user's values, which pairs with the class's properties
     $address = new Address($dbc);
 
     //capture user input
@@ -27,6 +27,7 @@ if(!empty($_POST)){
 
     $address->insert();
 
+    //then redirect to main page on submission
     header('Location: addressbkproject.php');
 }
 

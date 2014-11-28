@@ -2,10 +2,11 @@
 require_once '../inc/person.class.php';
 require_once '../inc/address.class.php';
 
+var_dump($_GET);
 
 if(!empty($_POST)){
 
-    //create a new object to hold the user's values, which pairs with the classes properties
+    //create a new object to hold the user's values, which pairs with the class's properties
     $person = new Person($dbc);
 
     //capture user input
@@ -90,7 +91,11 @@ $people = $people_statement->fetchAll(PDO::FETCH_ASSOC);
 
                     <?= $person['zip'] ?>
                     <a class='btn btn-danger btn-sm' href="add_address.php?id=<?=$person['id']?>">Add</a>
+
+                    <? if ($person['a_id']) :?>
+                    <!-- If null, don't display link. -->
                     <a class='btn' href="?a_id=<?= $person['a_id'] ?>">Remove</a>
+                    <? endif; ?>
                 </td>
             </tr>
         <? endforeach ?>
