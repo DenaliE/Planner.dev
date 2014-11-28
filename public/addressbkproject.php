@@ -74,27 +74,38 @@ $people = $people_statement->fetchAll(PDO::FETCH_ASSOC);
             </tr>
         <? foreach($people as $person):?>
             <tr>
+    <!-- Do not display button or comma if all fields weren't entered -->
+    <? if (!empty($person['first_name']) ||
+           !empty($person['last_name'])  ||
+           !empty($person['phone'])):?>
                 <td>
                     <?= $person['first_name'] ?>
 
-                    <?= $person['last_name'] ?>
+                    <?= $person['last_name'] . ', '?>
 
                     <?= $person['phone'] ?>
-                    <a class='btn' href="?id=<?= $person['id'] ?>">Remove</a>
+                    <a class='btn btn-danger btn-sm' href="?id=<?= $person['id'] ?>">Remove</a>
                 </td>
+    <? endif; ?>
+
+    <!-- Do not display button or commas if all fields weren't entered -->
+    <? if (!empty($person['street']) ||
+           !empty($person['city'])  ||
+           !empty($person['state']) ||
+           !empty($person['zip'])):?>
                 <td>
-                    <?= $person['street'] ?>
+                    <?= $person['street'] . ', ' ?>
 
-                    <?= $person['city'] ?>
+                    <?= $person['city'] . ', ' ?>
 
-                    <?= $person['state'] ?>
+                    <?= $person['state']. ', ' ?>
 
                     <?= $person['zip'] ?>
-                    <a class='btn btn-danger btn-sm' href="add_address.php?id=<?=$person['id']?>">Add</a>
-
+                    <a class='btn btn-success btn-sm' href="add_address.php?id=<?=$person['id']?>">Add</a>
+    <? endif; ?>
                     <? if ($person['a_id']) :?>
                     <!-- If null, don't display link. -->
-                    <a class='btn' href="?a_id=<?= $person['a_id'] ?>">Remove</a>
+                    <a class='btn btn-danger btn-sm' href="?a_id=<?= $person['a_id'] ?>">Remove</a>
                     <? endif; ?>
                 </td>
             </tr>
