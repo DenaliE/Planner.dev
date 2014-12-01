@@ -70,6 +70,10 @@ a {
     float: right;
     margin-left: 5px;
 }
+
+button {
+    margin-top: 25px;
+}
 </style>
 </head>
 <body class='container'>
