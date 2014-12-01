@@ -2,8 +2,7 @@
 require_once '../inc/person.class.php';
 require_once '../inc/address.class.php';
 
-var_dump($_GET);
-
+//adds new person
 if(!empty($_POST)){
 
     //create a new object to hold the user's values, which pairs with the class's properties
@@ -17,30 +16,35 @@ if(!empty($_POST)){
     $person->insert();
 }
 
+//deletes an adddress
 if(isset($_GET['a_id'])){
 
+    //Fetches address
     $address_statement = $dbc->prepare('SELECT * FROM address WHERE id = :id');
     $address_statement->bindValue(':id', $_GET['a_id'], PDO::PARAM_INT);
     $address_statement->execute();
 
     $address = $address_statement->fetchObject("Address", [$dbc]);
 
+    //deletes
     $address->delete();
 }
 
+//deletes a person
 if(isset($_GET['id'])){
 
-    //make query for person
-
+    //Fetches person from db
     $person_statment = $dbc->prepare('SELECT id, first_name, last_name, phone FROM people WHERE id = :id');
     $person_statment->bindValue(':id', $_GET['id'], PDO::PARAM_INT);
     $person_statment->execute();
 
     $person = $person_statment->fetchObject("Person", [$dbc]);
 
+    //deletes
     $person->delete();
 }
 
+//fetches all information associated with each person
 $people_statement = $dbc->query("SELECT people.id, first_name, last_name, phone, address.id
                         AS a_id, address.street, address.state,address.city, address.zip
                         FROM people
@@ -59,8 +63,14 @@ $people = $people_statement->fetchAll(PDO::FETCH_ASSOC);
 <!-- Latest compiled and minified JavaScript -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
 
-<link rel="stylesheet" type="text/css" href="css/addressbook_mysql.css">
+<!-- <link rel="stylesheet" type="text/css" href="css/addressbook_mysql.css"> -->
+<style type="text/css">
 
+a {
+    float: right;
+    margin-left: 5px;
+}
+</style>
 </head>
 <body class='container'>
 
@@ -70,25 +80,25 @@ $people = $people_statement->fetchAll(PDO::FETCH_ASSOC);
             <tr>
                 <th>Person</th>
                 <th>Address</th>
-
             </tr>
         <? foreach($people as $person):?>
             <tr>
-    <!-- Do not display button or comma if all fields weren't entered -->
+    <!-- Does not display button or comma if all fields weren't entered -->
     <? if (!empty($person['first_name']) ||
            !empty($person['last_name'])  ||
            !empty($person['phone'])):?>
-                <td>
+                <td col>
                     <?= $person['first_name'] ?>
 
                     <?= $person['last_name'] . ', '?>
 
                     <?= $person['phone'] ?>
                     <a class='btn btn-danger btn-sm' href="?id=<?= $person['id'] ?>">Remove</a>
+                    <a class='btn btn-success btn-sm' href="add_address.php?id=<?=$person['id']?>">Add Address</a>
                 </td>
     <? endif; ?>
 
-    <!-- Do not display button or commas if all fields weren't entered -->
+    <!-- Does not display button or commas if all fields weren't entered -->
     <? if (!empty($person['street']) ||
            !empty($person['city'])  ||
            !empty($person['state']) ||
@@ -101,11 +111,13 @@ $people = $people_statement->fetchAll(PDO::FETCH_ASSOC);
                     <?= $person['state']. ', ' ?>
 
                     <?= $person['zip'] ?>
-                    <a class='btn btn-success btn-sm' href="add_address.php?id=<?=$person['id']?>">Add</a>
+
+                    <!-- Add an edit button that follows the same format -->
     <? endif; ?>
                     <? if ($person['a_id']) :?>
-                    <!-- If null, don't display link. -->
-                    <a class='btn btn-danger btn-sm' href="?a_id=<?= $person['a_id'] ?>">Remove</a>
+                        <!-- If null, don't display link. -->
+                        <a class='btn btn-danger btn-sm' href="?a_id=<?= $person['a_id'] ?>">Remove</a>
+                        <a class='btn btn-danger btn-sm' href="edit_address.php?a_id=<?= $person['a_id'] ?>">Edit</a>
                     <? endif; ?>
                 </td>
             </tr>
