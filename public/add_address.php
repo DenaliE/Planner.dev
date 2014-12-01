@@ -2,6 +2,7 @@
 require_once '../inc/person.class.php';
 require_once '../inc/address.class.php';
 
+//Fetches person from db. Redirects user if there is no $_GET['id']/if not assciated with a person
 if(isset($_GET['id'])) {
     //make query for person (get information stored in db).
     $person_statment = $dbc->prepare('SELECT id, first_name, last_name, phone FROM people WHERE id = :id');
@@ -10,9 +11,11 @@ if(isset($_GET['id'])) {
     $person = $person_statment->fetchObject("Person", [$dbc]);
 } else {
     header('Location: addressbkproject.php');
+    //always exit after a redirect
+    exit;
 }
 
-
+//Otherwise, if $_POST is not empty, capture input and send to db, then redirect back to home page
 if(!empty($_POST)){
 
     //create a new object to hold the user's values, which pairs with the class's properties
@@ -29,6 +32,8 @@ if(!empty($_POST)){
 
     //then redirect to main page on submission
     header('Location: addressbkproject.php');
+    //always exit after a redirect
+    exit;
 }
 
 ?>
@@ -46,8 +51,10 @@ if(!empty($_POST)){
 </head>
 <body>
 <div class='container'>
+    <!-- Name of person you are adding address for -->
     <h1>Add Address to <?= $person->first_name ?> <?= $person->last_name ?></h1>
 
+    <!-- Form to add address -->
     <form role='form' method= "POST" action="add_address.php?id=<?=$_GET['id']?>">
         <div class="form-group">
             <label for='street'>Address:</label>

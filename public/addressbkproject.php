@@ -81,26 +81,26 @@ button {
     <h1>Address Book</h1>
 
     <table class='table table-bordered'>
-            <tr>
-                <th>Person</th>
-                <th>Address</th>
-            </tr>
+        <tr>
+            <th>Person</th>
+            <th>Address</th>
+        </tr>
         <? foreach($people as $person):?>
             <tr>
     <!-- Does not display button or comma if all fields weren't entered -->
-    <? if (!empty($person['first_name']) ||
-           !empty($person['last_name'])  ||
-           !empty($person['phone'])):?>
-                <td col>
-                    <?= $person['first_name'] ?>
+            <? if (!empty($person['first_name']) ||
+                   !empty($person['last_name'])  ||
+                   !empty($person['phone'])):?>
+                        <td col>
+                            <?= $person['first_name'] ?>
 
-                    <?= $person['last_name'] . ', '?>
+                            <?= $person['last_name'] . ', '?>
 
-                    <?= $person['phone'] ?>
-                    <a class='btn btn-danger btn-sm' href="?id=<?= $person['id'] ?>">Remove</a>
-                    <a class='btn btn-success btn-sm' href="add_address.php?id=<?=$person['id']?>">Add Address</a>
-                </td>
-    <? endif; ?>
+                            <?= $person['phone'] ?>
+                            <a class='btn btn-danger btn-sm' href="?id=<?= $person['id'] ?>">Remove</a>
+                            <a class='btn btn-success btn-sm' href="add_address.php?id=<?=$person['id']?>">Add Address</a>
+                        </td>
+            <? endif; ?>
 
     <!-- Does not display button or commas if all fields weren't entered -->
     <? if (!empty($person['street']) ||
