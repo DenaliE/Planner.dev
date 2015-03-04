@@ -95,7 +95,7 @@ if (isset($_GET['id'])){
 </table>
 <form id = "form" role = "form" class="form-inline" method="POST" action="address_book.php">
 
-	<input id="name" name="name" >
+	<input id="name" name="name" autofocus>
 	<input id="phone" name="phone"  >
 	<input id="address" name="address" >
 	<input id="city" name="city" >

@@ -28,4 +28,12 @@ class Address extends Model {
         $deleted_address->bindValue(':id', $this->id, PDO::PARAM_INT);
         $deleted_address->execute();
     }//end delete
+
+    public function edit(){
+        $edit_address = $this->dbc->prepare("UPDATE address SET
+
+            WHERE id = :id");
+
+
+    }//end edit
 }//end class

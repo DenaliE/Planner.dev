@@ -12,14 +12,6 @@ $address_statement->execute();
 $address = $address_statement->fetchObject("Address", [$dbc]);
 
 
-if (!empty($_POST)) {
-    foreach ($_POST as $column => $value) {
-        if (isset($value) && $value != '') {
-    var_dump($value);
-            $address->edit($column, $value);
-        }
-    }//end foreach
-}//end if
 
 ?>
 
